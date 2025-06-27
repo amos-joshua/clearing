@@ -1,0 +1,10 @@
+FROM node:22-slim
+
+RUN mkdir -p /app
+WORKDIR /app
+COPY package*.json ./
+RUN ls /app
+RUN pwd
+RUN npm install --verbose
+
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
