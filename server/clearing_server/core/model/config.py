@@ -74,7 +74,7 @@ class ServerConfig(BaseSettings):
     )
     firebase_database_url: str | None = Field(
         None,
-        description="Optional database URL for firebase realtime database. If null, defaults to default database for project"
+        description="Optional database URL for firebase realtime database. If null, defaults to default database for project",
     )
 
     clear_db_on_startup: bool = Field(

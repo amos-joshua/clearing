@@ -71,10 +71,10 @@ class UserRepositoryFirebase(UserRepositoryBase):
     @override
     def verify_admin_token(self, token: str) -> User:
         user = self._verify_token(token)
-        user_permissions_path = self.config.user_permissions_path(
-            user.uid
-        )
-        user_permissions = firebase_admin.db.reference(user_permissions_path).get()
+        user_permissions_path = self.config.user_permissions_path(user.uid)
+        user_permissions = firebase_admin.db.reference(
+            user_permissions_path
+        ).get()
         if user_permissions is None:
             raise CallParticipantAuthenticationFailure()
         if user_permissions.get("admin", False):

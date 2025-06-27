@@ -52,7 +52,9 @@ class PushNotificationWorker:
     async def connect(self) -> AbstractRobustConnection:
         """Establish connection to RabbitMQ."""
         try:
-            connection = await aio_pika.connect_robust(self.config.rabbit_mq_url)
+            connection = await aio_pika.connect_robust(
+                self.config.rabbit_mq_url
+            )
             return connection
         except Exception as exc:
             self.log.push_notification_error(
