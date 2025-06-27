@@ -1,0 +1,16 @@
+secrets
+.firebaserc
+.env*
+*.log
+.pytest_cache
+.idea
+firebase.json
+.gitignore
+database.rules.json
+tests
+Dockerfile
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd

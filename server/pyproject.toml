@@ -1,0 +1,42 @@
+[project]
+name = "clearing-server"
+version = "0.2.6"
+description = ""
+authors = [
+    {name = "Amos",email = "dev@swiftllama.net"}
+]
+readme = "README.md"
+requires-python = ">=3.12,<4.0"
+dependencies = [
+    "pydantic (>=2.11.5,<3.0.0)",
+    "pytest (>=8.3.5,<9.0.0)",
+    "black (>=25.1.0,<26.0.0)",
+    "isort (>=6.0.1,<7.0.0)",
+    "pytest-asyncio (>=1.0.0,<2.0.0)",
+    "firebase-admin (>=6.9.0,<7.0.0)",
+    "fastapi (>=0.115.12,<0.116.0)",
+    "aio-pika (>=9.5.5,<10.0.0)",
+    "httpx (>=0.28.1,<0.29.0)",
+    "websockets (>=15.0.1,<16.0.0)",
+    "uvicorn (>=0.34.3,<0.35.0)",
+    "pydantic-settings (>=2.10.0,<3.0.0)",
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 80
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "module"
+
+[tool.poetry.scripts]
+test-server = "clearing_server.switchboard_server.test:serve"
+dev-server = "clearing_server.switchboard_server.dev:serve"
