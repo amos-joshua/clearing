@@ -33,7 +33,7 @@ class _RootScaffoldState extends State<RootScaffold> {
     return Material(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Clearing"),
+          title: const Text("ClearRing"),
           actions: const [SettingsIcon()],
         ),
         body: widget.navigationShell,

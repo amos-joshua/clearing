@@ -20,7 +20,7 @@ void main() {
 
 class ClearingApp extends StatelessWidget {
   const ClearingApp({super.key});
-  final title = 'Clearing';
+  final title = 'ClearRing';
 
   @override
   Widget build(BuildContext context) {

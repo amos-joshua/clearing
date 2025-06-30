@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../services/logging/widgets/log_viewer_button.dart';
+import '../../../utils/widgets/loading_handset_spinner.dart';
 import '../bloc.dart';
 import '../model/app_user.dart';
 
@@ -31,13 +32,9 @@ class AuthProtected extends StatelessWidget {
       );
 
   Widget loadingWidget() => _scaffold(
-    child: Padding(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: Shimmer.fromColors(
-        baseColor: Colors.black12,
-        highlightColor: Colors.white,
-        child: const Text('LOADING', style: TextStyle(fontSize: 24.0)),
-      ),
+    child: const Padding(
+      padding: EdgeInsets.only(top: 64.0),
+      child: LoadingHandsetSpinner(),
     ),
   );
 
