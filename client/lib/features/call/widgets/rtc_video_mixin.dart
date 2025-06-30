@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 import '../../../utils/webrtc/webrtc_session.dart';
@@ -14,13 +15,9 @@ mixin RtcVideoMixin {
     await localRtc?.initialize();
 
     final localStream = webrtcSession.localStream;
+
     if (localStream != null) {
       localRtc?.srcObject = localStream;
-
-      /*
-      for (final track in localStream.getAudioTracks()) {
-        webrtcSession.peerConnection?.addTrack(track, localStream);
-      }*/
     }
 
     // NOTE: sanity check
@@ -44,17 +41,37 @@ mixin RtcVideoMixin {
     localRtc = null;
   }
 
-  void setMicEnabled(bool enabled) {
+  void setMicMuteEnabled(
+    BuildContext context,
+    bool enabled, {
+    bool showSnackBar = true,
+  }) {
     final localStream = localRtc?.srcObject;
     if (localStream == null) {
       return;
     }
     localStream.getAudioTracks().forEach((track) {
-      Helper.setMicrophoneMute(!enabled, track);
+      Helper.setMicrophoneMute(enabled, track);
     });
+    if (showSnackBar) {
+      _showSnackBar(context, enabled ? 'Call muted' : 'Call unmuted');
+    }
   }
 
-  void setSpeakerphone(bool enabled) {
+  void setSpeakerphone(
+    BuildContext context,
+    bool enabled, {
+    bool showSnackBar = true,
+  }) {
     Helper.setSpeakerphoneOn(enabled);
+    if (showSnackBar) {
+      _showSnackBar(context, enabled ? 'Speakerphone on' : 'Speakerphone off');
+    }
+  }
+
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 }

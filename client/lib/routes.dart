@@ -107,11 +107,13 @@ final appRouter = GoRouter(
                   builder: (BuildContext context, GoRouterState state) {
                     final args =
                         state.extra as ({Call call, OutgoingCallBloc callBloc});
-                    return Material(
-                      child: OutgoingCallPage(
-                        call: args.call,
-                        callBloc: args.callBloc,
-                        inScaffold: false,
+                    return ScaffoldMessenger(
+                      child: Material(
+                        child: OutgoingCallPage(
+                          call: args.call,
+                          callBloc: args.callBloc,
+                          inScaffold: false,
+                        ),
                       ),
                     );
                   },
@@ -122,11 +124,13 @@ final appRouter = GoRouter(
                   builder: (BuildContext context, GoRouterState state) {
                     final args =
                         state.extra as ({Call call, IncomingCallBloc callBloc});
-                    return Material(
-                      child: IncomingCallPage(
-                        call: args.call,
-                        callBloc: args.callBloc,
-                        inScaffold: false,
+                    return ScaffoldMessenger(
+                      child: Material(
+                        child: IncomingCallPage(
+                          call: args.call,
+                          callBloc: args.callBloc,
+                          inScaffold: false,
+                        ),
                       ),
                     );
                   },

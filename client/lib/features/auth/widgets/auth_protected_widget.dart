@@ -1,7 +1,6 @@
 import 'package:clearing_client/features/auth/widgets/login_form_multichoice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shimmer/shimmer.dart';
 import '../../../services/logging/widgets/log_viewer_button.dart';
 import '../../../utils/widgets/loading_handset_spinner.dart';
 import '../bloc.dart';

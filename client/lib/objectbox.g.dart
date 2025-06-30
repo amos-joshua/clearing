@@ -337,7 +337,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(7, 2096184488857740476),
     name: 'Call',
-    lastPropertyId: const obx_int.IdUid(18, 8736472327381492808),
+    lastPropertyId: const obx_int.IdUid(19, 9079258450306877994),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -430,6 +430,14 @@ final _entities = <obx_int.ModelEntity>[
         type: 9,
         flags: 0,
       ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(19, 9079258450306877994),
+        name: 'contactId',
+        type: 11,
+        flags: 520,
+        indexId: const obx_int.IdUid(8, 1327692473304755596),
+        relationTarget: 'Contact',
+      ),
     ],
     relations: <obx_int.ModelRelation>[
       obx_int.ModelRelation(
@@ -515,7 +523,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
     entities: _entities,
     lastEntityId: const obx_int.IdUid(8, 5514264026573602949),
-    lastIndexId: const obx_int.IdUid(7, 2743340243300988469),
+    lastIndexId: const obx_int.IdUid(8, 1327692473304755596),
     lastRelationId: const obx_int.IdUid(1, 2478490554441955834),
     lastSequenceId: const obx_int.IdUid(0, 0),
     retiredEntityUids: const [],
@@ -968,7 +976,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
     ),
     Call: obx_int.EntityDefinition<Call>(
       model: _entities[6],
-      toOneRelations: (Call object) => [],
+      toOneRelations: (Call object) => [object.contact],
       toManyRelations: (Call object) => {
         obx_int.RelInfo<Call>.toMany(1, object.id): object.logEntries,
       },
@@ -997,7 +1005,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           object.webRTCSignalingState,
         );
         final stateOffset = fbb.writeString(object.state);
-        fbb.startTable(19);
+        fbb.startTable(20);
         fbb.addInt64(0, object.id);
         fbb.addBool(2, object.outgoing);
         fbb.addOffset(3, subjectOffset);
@@ -1013,6 +1021,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(15, webRTCIceGatheringStateOffset);
         fbb.addOffset(16, webRTCSignalingStateOffset);
         fbb.addOffset(17, stateOffset);
+        fbb.addInt64(18, object.contact.targetId);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1096,6 +1105,13 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 18,
                 0,
               );
+        object.contact.targetId = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          40,
+          0,
+        );
+        object.contact.attach(store);
         obx_int.InternalToManyAccess.setRelInfo<Call>(
           object.logEntries,
           store,
@@ -1446,6 +1462,11 @@ class Call_ {
   /// See [Call.state].
   static final state = obx.QueryStringProperty<Call>(
     _entities[6].properties[14],
+  );
+
+  /// See [Call.contact].
+  static final contact = obx.QueryRelationToOne<Call, Contact>(
+    _entities[6].properties[15],
   );
 
   /// see [Call.logEntries]

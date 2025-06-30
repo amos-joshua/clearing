@@ -68,6 +68,7 @@ class CallComposerBloc extends Bloc<CallComposerEvent, CallComposerState> {
     call.subject = state.subject;
     call.urgency = state.urgency;
     call.contactEmails = state.contactEmails;
+    call.contact.target = await database.contactForEmails(state.contactEmails);
     await database.saveCall(call);
     return call;
   }

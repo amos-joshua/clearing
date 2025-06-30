@@ -7,6 +7,7 @@ import '../../../../services/notifications/native.dart';
 import '../../../../services/storage/database.dart';
 import '../../../../utils/webrtc/webrtc_call_info_updater.dart';
 import '../../../../utils/webrtc/webrtc_session.dart';
+import '../../../contacts/model/contact.dart';
 import '../../../presets/model/enums.dart';
 import '../../model/call.dart';
 import '../../model/call_event.dart';
@@ -78,7 +79,7 @@ class IncomingCallBloc extends Bloc<CallEvent, IncomingCallState> {
     _callGateway.sendEvent(event);
   }
 
-  void _onReceiverAck(ReceiverAck event, Emitter<IncomingCallState> emit) {
+  void _onReceiverAck(ReceiverAck event, Emitter<IncomingCallState> emit) async{
     _sendEvent(event);
     if (state is IncomingCallStateIdle) {
       emit(const IncomingCallState.ringing());

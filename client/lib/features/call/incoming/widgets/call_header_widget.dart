@@ -22,15 +22,9 @@ class IncomingCallHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final call = RepositoryProvider.of<Call>(context);
-    final logger = context.read<LoggingService>();
-    String sender = '';
-    if (call.contactEmails.length != 1) {
-      sender = call.contactEmails[0];
-    } else {
-      logger.warning(
-        'Call ${call.callUuid} has ${call.contactEmails.length} contact emails, expected 1',
-      );
-    }
+
+    final displayName =
+        call.contact.target?.displayName ?? call.contactEmails.join(', ');
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -39,7 +33,7 @@ class IncomingCallHeaderWidget extends StatelessWidget {
         const SizedBox(height: 8),
         Text(stateText, style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
-        Text(sender, style: Theme.of(context).textTheme.bodyLarge),
+        Text(displayName, style: Theme.of(context).textTheme.bodyLarge),
         const SizedBox(height: 4),
         Text(switch (call.urgency) {
           CallUrgency.leisure => call.subject,

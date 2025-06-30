@@ -22,6 +22,9 @@ class OutgoingCallHeaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final call = RepositoryProvider.of<Call>(context);
 
+    final displayName =
+        call.contact.target?.displayName ?? call.contactEmails.join(', ');
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -29,10 +32,7 @@ class OutgoingCallHeaderWidget extends StatelessWidget {
         const SizedBox(height: 8),
         Text(stateText, style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
-        Text(
-          call.contactEmails.join(', '),
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
+        Text(displayName, style: Theme.of(context).textTheme.bodyLarge),
         const SizedBox(height: 4),
         Text(switch (call.urgency) {
           CallUrgency.leisure => call.subject,

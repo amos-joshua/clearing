@@ -261,7 +261,7 @@
     },
     {
       "id": "7:2096184488857740476",
-      "lastPropertyId": "18:8736472327381492808",
+      "lastPropertyId": "19:9079258450306877994",
       "name": "Call",
       "properties": [
         {
@@ -339,6 +339,14 @@
           "id": "18:8736472327381492808",
           "name": "state",
           "type": 9
+        },
+        {
+          "id": "19:9079258450306877994",
+          "name": "contactId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "8:1327692473304755596",
+          "relationTarget": "Contact"
         }
       ],
       "relations": [
@@ -380,7 +388,7 @@
     }
   ],
   "lastEntityId": "8:5514264026573602949",
-  "lastIndexId": "7:2743340243300988469",
+  "lastIndexId": "8:1327692473304755596",
   "lastRelationId": "1:2478490554441955834",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

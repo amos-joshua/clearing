@@ -1,6 +1,7 @@
 import 'package:objectbox/objectbox.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../contacts/model/contact.dart';
 import 'call_event.dart';
 
 @Entity()
@@ -11,7 +12,7 @@ class Call {
   String callUuid;
   final logEntries = ToMany<LogEntry>();
 
-  //final contact = ToOne<Contact>();
+  final contact = ToOne<Contact>();
   List<String> contactEmails;
 
   bool get incoming => !outgoing;

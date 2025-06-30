@@ -16,7 +16,7 @@ class RingingCallWidget extends StatelessWidget {
           stateText: 'Ringing...',
         ),
         const SizedBox(height: 40),
-        const HangUpButton(),
+        const HangUpButton(isOutgoing: true),
       ],
     );
   }

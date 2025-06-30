@@ -17,7 +17,7 @@ class OngoingCallWidget extends StatefulWidget {
 
 class _OngoingCallWidgetState extends State<OngoingCallWidget>
     with RtcVideoMixin {
-  bool micEnabled = false;
+  bool micMuted = false;
   bool speakerphoneOn = false;
 
   @override
@@ -27,7 +27,8 @@ class _OngoingCallWidgetState extends State<OngoingCallWidget>
     final webrtcSession = bloc.webrtcSession;
     if (webrtcSession != null) {
       startWebRTC(webrtcSession);
-      setMicEnabled(micEnabled);
+      setMicMuteEnabled(context, micMuted, showSnackBar: false);
+      setSpeakerphone(context, speakerphoneOn, showSnackBar: false);
     }
   }
 
@@ -68,27 +69,25 @@ class _OngoingCallWidgetState extends State<OngoingCallWidget>
               children: [
                 IconButton(
                   onPressed: () {
-                    setMicEnabled(!micEnabled);
                     setState(() {
-                      micEnabled = !micEnabled;
+                      micMuted = !micMuted;
+                      setMicMuteEnabled(context, micMuted);
                     });
                   },
-                  icon: Icon(micEnabled ? Icons.mic : Icons.mic_off),
+                  icon: Icon(micMuted ? Icons.mic : Icons.mic_off),
                 ),
                 IconButton(
                   onPressed: () {
-                    setSpeakerphone(!speakerphoneOn);
                     setState(() {
                       speakerphoneOn = !speakerphoneOn;
-                    });
+                      setSpeakerphone(context, speakerphoneOn);
+                    }); 
                   },
-                  icon: Icon(
-                    speakerphoneOn ? Icons.speaker : Icons.speaker_notes_off,
-                  ),
+                  icon: Icon(speakerphoneOn ? Icons.speaker : Icons.headset),
                 ),
               ],
             ),
-            const HangUpButton(),
+            const HangUpButton(isOutgoing: false),
           ],
         );
       },

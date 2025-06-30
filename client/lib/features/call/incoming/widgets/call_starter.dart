@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../services/active_call/active_call.dart';
 import '../../../../services/firebase/service.dart';
 import '../../../../services/logging/logging_service.dart';
+import '../../../../services/storage/database.dart';
 import '../../model/call.dart';
 import '../../model/call_event.dart';
 
@@ -21,6 +22,7 @@ class CallStarter extends StatefulWidget {
 class _CallStarterState extends State<CallStarter> {
   late final LoggingService logger;
   late final ActiveCallService activeCallService;
+  late final Database database;
   StreamSubscription<Call>? _callStreamSubscription;
   StreamSubscription<FirebaseRemoteMessage>? _firebaseMessageSubscription;
 
@@ -29,6 +31,7 @@ class _CallStarterState extends State<CallStarter> {
     super.initState();
     logger = context.read<LoggingService>();
     activeCallService = context.read<ActiveCallService>();
+    database = context.read<Database>();
     final firebaseService = context.read<FirebaseServiceBase>();
     _firebaseMessageSubscription = firebaseService.firebaseMessageStream.listen(
       processFirebaseMessage,
@@ -50,10 +53,11 @@ class _CallStarterState extends State<CallStarter> {
     }
   }
 
-  void processFirebaseMessage(FirebaseRemoteMessage message) {
+  void processFirebaseMessage(FirebaseRemoteMessage message) async {
     final event = message.callEvent;
     if (event is IncomingCallInit) {
       final context = this.context;
+      final contact = await database.contactForEmails([event.callerEmail]);
       if (context.mounted) {
         final call = Call(
           outgoing: false,
@@ -63,6 +67,7 @@ class _CallStarterState extends State<CallStarter> {
           subject: event.subject,
           startTime: DateTime.now(),
         );
+        call.contact.target = contact;
         activeCallService.startIncomingCall(
           context,
           call: call,

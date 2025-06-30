@@ -281,7 +281,12 @@ class StartCallDialog {
   }
 
   Future<Call?> showForContact(Contact contact) async {
-    return show(emails: contact.emails, displayName: contact.displayName);
+    final call = await show(
+      emails: contact.emails,
+      displayName: contact.displayName,
+    );
+    call?.contact.target = contact;
+    return call;
   }
 }
 

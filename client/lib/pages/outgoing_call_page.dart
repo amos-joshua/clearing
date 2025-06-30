@@ -26,29 +26,34 @@ class OutgoingCallPage extends StatelessWidget {
       callBloc: callBloc,
       database: context.read<Database>(),
       child: Builder(
-        builder: (context) {
-          if (inScaffold) {
-            return _scaffold(context, child: const OutgoingCallWidget());
-          }
-          return const OutgoingCallWidget();
-        },
+        builder: (context) => _scaffold(
+          context,
+          child: const OutgoingCallWidget(),
+          withAppBar: inScaffold,
+        ),
       ),
     );
   }
 
-  Widget _scaffold(BuildContext context, {required Widget child}) => Scaffold(
-    appBar: AppBar(
-      title: const Text('Outgoing Call'),
-      actions: [
-        IconButton(
-          onPressed: () {
-            context.read<OutgoingCallBloc>().add(const SenderHangUp());
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.close),
-        ),
-      ],
-    ),
+  Widget _scaffold(
+    BuildContext context, {
+    required Widget child,
+    required bool withAppBar,
+  }) => Scaffold(
+    appBar: withAppBar
+        ? AppBar(
+            title: const Text('Outgoing Call'),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  context.read<OutgoingCallBloc>().add(const SenderHangUp());
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.close),
+              ),
+            ],
+          )
+        : null,
     body: child,
   );
 }

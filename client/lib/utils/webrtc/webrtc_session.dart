@@ -52,16 +52,18 @@ class WebRTCSession {
       _stateStreamController.add(WebRTCSessionEventSignalingState(state.name));
     };
 
-    final localStream = await webrtc.navigator.mediaDevices.getUserMedia({
-      'audio': true,
-      'video': false, //{'facingMode': 'user'}
-    });
+    final sessionLocalStream = await webrtc.navigator.mediaDevices.getUserMedia(
+      {
+        'audio': true,
+        'video': false, //{'facingMode': 'user'}
+      },
+    );
 
-    localStream.getTracks().forEach((track) {
+    sessionLocalStream.getTracks().forEach((track) {
       _stateStreamController.add(
-        WebRTCSessionEventAddLocalStreamTrack(localStream),
+        WebRTCSessionEventAddLocalStreamTrack(sessionLocalStream),
       );
-      currentPeerConnection.addTrack(track, localStream);
+      currentPeerConnection.addTrack(track, sessionLocalStream);
     });
 
     currentPeerConnection.onIceCandidate = (iceCandidate) {
@@ -73,6 +75,7 @@ class WebRTCSession {
       }
     };
     peerConnection = currentPeerConnection;
+    localStream = sessionLocalStream;
   }
 
   Future<String> senderCreateSDPOffer() async {

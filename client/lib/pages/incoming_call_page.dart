@@ -8,7 +8,6 @@ import '../features/call/incoming/incoming_call_widget.dart';
 import '../services/storage/database.dart';
 
 class IncomingCallPage extends StatelessWidget {
-  
   const IncomingCallPage({
     super.key,
     required this.callBloc,
@@ -27,30 +26,34 @@ class IncomingCallPage extends StatelessWidget {
       callBloc: callBloc,
       database: context.read<Database>(),
       child: Builder(
-        builder: (context) {
-          if (inScaffold) {
-            return _scaffold(context, child: const IncomingCallWidget());
-          }
-          return const IncomingCallWidget();
-        },
+        builder: (context) => _scaffold(
+          context,
+          child: const IncomingCallWidget(),
+          withAppBar: inScaffold,
+        ),
       ),
     );
   }
 
-  Widget _scaffold(BuildContext context, {required Widget child}) => Scaffold(
-    appBar: AppBar(
-      title: const Text('Incoming Call'),
-      actions: [
-        IconButton(
-          onPressed: () {
-            context.read<IncomingCallBloc>().add(const ReceiverHangUp());
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.close),
-        ),
-      ],
-    ),
+  Widget _scaffold(
+    BuildContext context, {
+    required Widget child,
+    required bool withAppBar,
+  }) => Scaffold(
+    appBar: withAppBar
+        ? AppBar(
+            title: const Text('Incoming Call'),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  context.read<IncomingCallBloc>().add(const ReceiverHangUp());
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.close),
+              ),
+            ],
+          )
+        : null,
     body: child,
   );
 }
-

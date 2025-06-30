@@ -16,7 +16,7 @@ class CallingCallWidget extends StatelessWidget {
           stateText: 'Calling...',
         ),
         SizedBox(height: 40),
-        HangUpButton(),
+        HangUpButton(isOutgoing: true),
       ],
     );
   }

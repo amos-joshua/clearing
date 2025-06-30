@@ -59,7 +59,7 @@ class _RootScaffoldState extends State<RootScaffold> {
                   final contact = await SelectContactsDialog(
                     context,
                   ).show([], singleChoice: true);
-                  if (contact == null || !context.mounted) {
+                  if (contact == null || contact.isEmpty || !context.mounted) {
                     return;
                   }
                   final call = await StartCallDialog(
@@ -68,7 +68,7 @@ class _RootScaffoldState extends State<RootScaffold> {
                   if (call == null || !context.mounted) {
                     return;
                   }
-
+                  
                   activeCallService.requestOutgoingCallStart(call);
                 },
                 child: const Icon(Icons.call),
