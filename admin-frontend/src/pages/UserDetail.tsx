@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, User, Smartphone } from 'lucide-react';
+import { ArrowLeft, User, Smartphone, Shield } from 'lucide-react';
 import { useFirebaseData } from '../hooks/useFirebaseData';
 
 export default function UserDetail() {
@@ -46,6 +46,8 @@ export default function UserDetail() {
 
     const userData = data.users[userId];
     const devices = userData.devices || {};
+    const userPermissions = data?.user_permissions || {};
+    const isAdmin = userPermissions[userId]?.admin || false;
 
     return (
         <div className="p-8">
@@ -73,8 +75,16 @@ export default function UserDetail() {
                     <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
                         <User className="w-8 h-8 text-blue-600" />
                     </div>
-                    <div>
-                        <h2 className="text-2xl font-semibold text-gray-900">{userId}</h2>
+                    <div className="flex-1">
+                        <div className="flex items-center space-x-3">
+                            <h2 className="text-2xl font-semibold text-gray-900">{userId}</h2>
+                            {isAdmin && (
+                                <div className="flex items-center space-x-1 px-3 py-1 bg-orange-100 text-orange-800 rounded-full">
+                                    <Shield className="w-4 h-4" />
+                                    <span className="text-sm font-medium">Admin</span>
+                                </div>
+                            )}
+                        </div>
                         <p className="text-gray-500">User ID</p>
                     </div>
                 </div>
@@ -90,6 +100,15 @@ export default function UserDetail() {
                             <span className="text-gray-600">Account Status</span>
                             <span className="px-2 py-1 bg-green-100 text-green-800 text-sm rounded-full">
                                 Active
+                            </span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                            <span className="text-gray-600">Admin Access</span>
+                            <span className={`px-2 py-1 text-sm rounded-full ${isAdmin
+                                ? 'bg-orange-100 text-orange-800'
+                                : 'bg-gray-100 text-gray-600'
+                                }`}>
+                                {isAdmin ? 'Yes' : 'No'}
                             </span>
                         </div>
                     </div>

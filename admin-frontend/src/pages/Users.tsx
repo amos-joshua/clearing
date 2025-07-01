@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Users as UsersIcon, Smartphone, User, ChevronRight } from 'lucide-react';
+import { Users as UsersIcon, Smartphone, User, ChevronRight, Shield } from 'lucide-react';
 import { useFirebaseData } from '../hooks/useFirebaseData';
 
 interface UserData {
@@ -31,6 +31,7 @@ export default function Users() {
     }
 
     const users = data?.users ? Object.entries(data.users) : [];
+    const userPermissions = data?.user_permissions || {};
 
     return (
         <div className="p-8">
@@ -40,7 +41,7 @@ export default function Users() {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                     <div className="flex items-center justify-between mb-4">
                         <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -78,6 +79,18 @@ export default function Users() {
                     </h3>
                     <p className="text-sm text-gray-600">Users with Devices</p>
                 </div>
+
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                            <Shield className="w-6 h-6 text-orange-600" />
+                        </div>
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900">
+                        {Object.values(userPermissions).filter(permission => permission.admin).length}
+                    </h3>
+                    <p className="text-sm text-gray-600">Admin Users</p>
+                </div>
             </div>
 
             {/* Users List */}
@@ -112,6 +125,12 @@ export default function Users() {
                                                     <Smartphone className="w-4 h-4" />
                                                     <span>{Object.keys(userData.devices || {}).length} devices</span>
                                                 </div>
+                                                {userPermissions[userId]?.admin && (
+                                                    <div className="flex items-center space-x-1">
+                                                        <Shield className="w-4 h-4" />
+                                                        <span className="text-orange-600 font-medium">Admin</span>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

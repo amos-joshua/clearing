@@ -77,6 +77,11 @@ export interface FirebaseData {
       };
     };
   };
+  user_permissions?: {
+    [userId: string]: {
+      admin?: boolean;
+    };
+  };
 }
 
 export interface CombinedCallData {
