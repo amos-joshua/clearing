@@ -3,7 +3,7 @@ from typing import AsyncGenerator
 
 import aio_pika
 from aiormq import AMQPConnectionError
-from fastapi import Depends, FastAPI, Header, HTTPException, WebSocket
+from fastapi import Depends, FastAPI, Header, HTTPException, WebSocket, Query
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
@@ -57,8 +57,7 @@ def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
     ) -> SessionFactory:
         return SessionFactory(connection, users, config)
 
-    @app.get("/info")
-    async def info(authorization: str = Header(None)):
+    async def verify_admin_auth(authorization: str = Header(None)):
         if not authorization:
             raise HTTPException(
                 status_code=401, detail="Authorization header required"
@@ -78,7 +77,7 @@ def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
             users.verify_admin_token(token)
         except Exception as exc:
             users.log.server_error(
-                f"Authentication denied for /info endpoint: {exc}",
+                f"Authentication denied for admin endpoint: {exc}",
                 exc,
                 traceback.format_exc(),
             )
@@ -86,7 +85,56 @@ def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
                 status_code=403, detail="Invalid or insufficient permissions"
             )
 
+    @app.get("/info")
+    async def info(_: None = Depends(verify_admin_auth)):
         return config.model_dump()
+
+    @app.get("/user/info")
+    async def user_info(
+        email: str = Query(None, description="User's email address"),
+        uid: str = Query(None, description="User's Firebase UID"),
+        _: None = Depends(verify_admin_auth),
+    ):
+        # Validate that exactly one parameter is provided
+        if email is None and uid is None:
+            raise HTTPException(
+                status_code=400,
+                detail="Either 'email' or 'uid' parameter must be provided"
+            )
+        
+        if email is not None and uid is not None:
+            raise HTTPException(
+                status_code=400,
+                detail="Only one of 'email' or 'uid' parameter should be provided"
+            )
+
+        try:
+            if email is not None:
+                user_info = users.get_user_by_email(email)
+            else:
+                user_info = users.get_user_by_uid(uid)
+            
+            if user_info is None:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"User not found with {'email' if email else 'uid'}: {email or uid}"
+                )
+            
+            return user_info
+            
+        except HTTPException:
+            # Re-raise HTTP exceptions as-is
+            raise
+        except Exception as exc:
+            users.log.server_error(
+                f"Error retrieving user info for {'email' if email else 'uid'}: {email or uid}",
+                exc,
+                traceback.format_exc(),
+            )
+            raise HTTPException(
+                status_code=500,
+                detail="Internal server error while retrieving user information"
+            )
 
     state_machine_outgoing = OutgoingCallStateMachine()
     state_machine_incoming = IncomingCallStateMachine()
@@ -153,5 +201,7 @@ def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
                 },
             )
         return {"status": "ok"}
+    
+    
 
     return app
