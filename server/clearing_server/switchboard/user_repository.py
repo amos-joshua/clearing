@@ -244,13 +244,25 @@ class UserRepositoryFirebase(UserRepositoryBase):
         return call_reference, call_data
 
     @override
-    def user_info_by_email(self, email: str) -> dict:
-        user = firebase_admin.auth.get_user_by_email(email)
+    def user_info_by_email(self, email: str) -> dict | None:
+        try:
+            user = firebase_admin.auth.get_user_by_email(email)
+        except firebase_admin.auth.UserNotFoundError:
+            return None
+        except ValueError:
+            return None
+
         return self._user_properties_as_dict(user)
 
     @override
-    def user_info_by_uid(self, uid: str) -> dict:
-        user = firebase_admin.auth.get_user(uid)
+    def user_info_by_uid(self, uid: str) -> dict | None:
+        try:
+            user = firebase_admin.auth.get_user(uid)
+        except firebase_admin.auth.UserNotFoundError:
+            return None
+        except ValueError:
+            return None
+
         return self._user_properties_as_dict(user)
 
     @staticmethod
