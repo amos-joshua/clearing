@@ -47,3 +47,9 @@ class UserRepositoryBase:
 
     def touch_call(self, call_uuid: str):
         raise NotImplemented()
+
+    def user_info_by_email(self, email: str) -> dict:
+        raise NotImplemented()
+
+    def user_info_by_uid(self, uid: str) -> dict:
+        raise NotImplemented()

@@ -95,13 +95,6 @@ def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
         uid: str = Query(None, description="User's Firebase UID"),
         _: None = Depends(verify_admin_auth),
     ):
-        # Validate that exactly one parameter is provided
-        if email is None and uid is None:
-            raise HTTPException(
-                status_code=400,
-                detail="Either 'email' or 'uid' parameter must be provided"
-            )
-        
         if email is not None and uid is not None:
             raise HTTPException(
                 status_code=400,
@@ -110,17 +103,22 @@ def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
 
         try:
             if email is not None:
-                user_info = users.get_user_by_email(email)
+                user_info_dict = users.user_info_by_email(email)
+            elif uid is not None:
+                user_info_dict = users.user_info_by_uid(uid)
             else:
-                user_info = users.get_user_by_uid(uid)
-            
-            if user_info is None:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Either 'email' or 'uid' parameter must be provided"
+                )
+
+            if user_info_dict is None:
                 raise HTTPException(
                     status_code=404,
                     detail=f"User not found with {'email' if email else 'uid'}: {email or uid}"
                 )
             
-            return user_info
+            return user_info_dict
             
         except HTTPException:
             # Re-raise HTTP exceptions as-is

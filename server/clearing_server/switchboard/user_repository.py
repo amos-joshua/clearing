@@ -242,3 +242,22 @@ class UserRepositoryFirebase(UserRepositoryBase):
             )
             call_reference.update(call_data)
         return call_reference, call_data
+
+    @override
+    def user_info_by_email(self, email: str) -> dict:
+        user = firebase_admin.auth.get_user_by_email(email)
+        return self._user_properties_as_dict(user)
+
+    @override
+    def user_info_by_uid(self, uid: str) -> dict:
+        user = firebase_admin.auth.get_user(uid)
+        return self._user_properties_as_dict(user)
+
+    @staticmethod
+    def _user_properties_as_dict(user: firebase_admin.auth.UserRecord) -> dict:
+        properties = {}
+        for name in dir(user.__class__):
+            attr = getattr(user.__class__, name)
+            if isinstance(attr, property):
+                properties[name] = getattr(user, name)
+        return properties
