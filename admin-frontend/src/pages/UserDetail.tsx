@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, User, Smartphone, Shield } from 'lucide-react';
+import { ArrowLeft, User, Smartphone, Shield, Info } from 'lucide-react';
 import { useFirebaseData } from '../hooks/useFirebaseData';
+import { UserInfoPopup } from '../components/UserInfoPopup';
 
 export default function UserDetail() {
     const { userId } = useParams<{ userId: string }>();
     const { data, loading } = useFirebaseData();
+    const [isUserInfoPopupOpen, setIsUserInfoPopupOpen] = useState(false);
 
     if (loading) {
         return (
@@ -66,6 +68,15 @@ export default function UserDetail() {
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">User Details</h1>
                         <p className="text-gray-600">Manage user information and devices</p>
                     </div>
+                    {userId && (
+                        <button
+                            onClick={() => setIsUserInfoPopupOpen(true)}
+                            className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                            <Info className="w-4 h-4" />
+                            <span>View User Info</span>
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -159,6 +170,15 @@ export default function UserDetail() {
                     </div>
                 )}
             </div>
+
+            {/* User Info Popup */}
+            {userId && (
+                <UserInfoPopup
+                    userId={userId}
+                    isOpen={isUserInfoPopupOpen}
+                    onClose={() => setIsUserInfoPopupOpen(false)}
+                />
+            )}
         </div>
     );
 } 

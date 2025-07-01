@@ -36,5 +36,5 @@ export async function authenticatedFetch(endpoint: string, options: RequestInit 
 
 export async function fetchWithAuth(endpoint: string, options: RequestInit = {}): Promise<any> {
     const response = await authenticatedFetch(endpoint, options);
-    return response;
+    return response.json();
 } 
