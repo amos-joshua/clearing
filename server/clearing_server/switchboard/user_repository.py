@@ -107,7 +107,7 @@ class UserRepositoryFirebase(UserRepositoryBase):
                 if user_data:
                     users.append(
                         User(
-                            name=user_data.display_name,
+                            name=user_data.display_name or user_data.email,
                             email=user_data.email,
                             uid=user_data.uid,
                         )
