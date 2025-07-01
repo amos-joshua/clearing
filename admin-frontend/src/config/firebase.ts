@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { connectAuthEmulator, getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getDatabase } from 'firebase/database';
+import { getEnvironment, isDevelopment, isProduction } from './environment';
 
 // Configure these values in your environment or config
 const firebaseConfig = {
@@ -13,11 +14,28 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:123456789:web:abcdef123456"
 };
 
+// Log Firebase configuration in dev and staging (but not production)
+if (!isProduction()) {
+  console.log('Firebase Configuration:');
+  console.log('Environment:', getEnvironment());
+  console.log('Project ID:', firebaseConfig.projectId);
+  console.log('Auth Domain:', firebaseConfig.authDomain);
+  console.log('Database URL:', firebaseConfig.databaseURL);
+  console.log('Storage Bucket:', firebaseConfig.storageBucket);
+  console.log('Messaging Sender ID:', firebaseConfig.messagingSenderId);
+  console.log('App ID:', firebaseConfig.appId);
+  console.log('API Key:', firebaseConfig.apiKey ? `${firebaseConfig.apiKey.substring(0, 10)}...` : 'Not set');
+  console.log('Backend URL:', import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000');
+  console.log('---');
+}
+
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-if (import.meta.env.DEV) {
-  connectAuthEmulator(auth, import.meta.env.VITE_FIREBASE_AUTH_EMULATOR_URL || 'http://localhost:9099', { disableWarnings: true });
+if (isDevelopment()) {
+  const emulatorUrl = import.meta.env.VITE_FIREBASE_AUTH_EMULATOR_URL || 'http://localhost:9099';
+  console.log('🔧 Connecting to Firebase Auth Emulator:', emulatorUrl);
+  connectAuthEmulator(auth, emulatorUrl, { disableWarnings: true });
 }
 
 export { auth };
