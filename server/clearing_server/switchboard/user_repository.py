@@ -18,19 +18,22 @@ from clearing_server.core.user_repository_base import UserRepositoryBase
 class UserRepositoryFirebase(UserRepositoryBase):
     SENDER_UID_KEY = "sender-uid"
     RECIPIENTS_KEY = "recipients"
-    CALL_STRUCTURE = {
-        "created-at": datetime.datetime.now().isoformat(),
-        CallDirection.SENDER.name: {
-            "log": {},
-            "state": OutgoingCallState.IDLE.name,
-            "devices": {},
-        },
-        CallDirection.RECEIVER.name: {
-            "log": {},
-            "state": IncomingCallState.IDLE.name,
-            "devices": {},
-        },
-    }
+
+    @staticmethod
+    def _get_call_structure() -> dict:
+        return {
+            "created-at": datetime.datetime.now().isoformat(),
+            CallDirection.SENDER.name: {
+                "log": {},
+                "state": OutgoingCallState.IDLE.name,
+                "devices": {},
+            },
+            CallDirection.RECEIVER.name: {
+                "log": {},
+                "state": IncomingCallState.IDLE.name,
+                "devices": {},
+            },
+        }
 
     def __init__(self, config: ServerConfig, call_log: LogBase):
         super().__init__(call_log)
@@ -231,10 +234,11 @@ class UserRepositoryFirebase(UserRepositoryBase):
     ) -> tuple[firebase_admin.db.Reference, dict]:
         call_reference, call_data = self._try_call_data(call_uuid, direction)
         if call_data is None:
+            call_structure = self._get_call_structure()
             call_data = (
-                self.CALL_STRUCTURE[direction.name]
+                call_structure[direction.name]
                 if direction
-                else self.CALL_STRUCTURE
+                else call_structure
             )
             call_reference.update(call_data)
         return call_reference, call_data
