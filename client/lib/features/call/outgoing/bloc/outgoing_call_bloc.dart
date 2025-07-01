@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../services/logging/logging_service.dart';
 import '../../../../services/storage/database.dart';
-import '../../../../utils/webrtc/webrtc_call_info_updater.dart';
 import '../../../../utils/webrtc/webrtc_session.dart';
+import '../../../webrtc/bloc/bloc.dart';
 import '../../model/call_event.dart';
 import '../../call_gateway.dart';
 import 'outgoing_call_state.dart';
@@ -18,7 +18,6 @@ class OutgoingCallBloc extends Bloc<CallEvent, OutgoingCallState> {
   final WebRTCSession? webrtcSession;
   final Database _database;
   StreamSubscription<CallEvent>? _subscription;
-  WebRTCCallInfoUpdater? _webrtcCallInfoUpdater;
 
   OutgoingCallBloc(
     this._call,
@@ -43,21 +42,12 @@ class OutgoingCallBloc extends Bloc<CallEvent, OutgoingCallState> {
       await _database.saveCall(_call, notify: false);
       add(event);
     });
-    if (webrtcSession != null) {
-      _webrtcCallInfoUpdater = WebRTCCallInfoUpdater(
-        database: database,
-        call: _call,
-        webrtcSession: webrtcSession!,
-        logger: _logger,
-      );
-    }
   }
 
   @override
   Future<void> close() async {
     await _subscription?.cancel();
     await webrtcSession?.close();
-    _webrtcCallInfoUpdater?.dispose();
     return super.close();
   }
 
@@ -177,17 +167,22 @@ class OutgoingCallBloc extends Bloc<CallEvent, OutgoingCallState> {
     required OutgoingCallBloc callBloc,
     required Widget child,
     required Database database,
+    required LoggingService logger,
+    required WebRTCSession? webrtcSession,
   }) {
     return RepositoryProvider.value(
       value: call,
-      child: BlocProvider.value(
-        value: callBloc, 
-        child: BlocListener<OutgoingCallBloc, OutgoingCallState>(
-          listener: (context, state) async {
-            call.state = state.runtimeType.toString();
-            await database.saveCall(call, notify: false);
-          },
-          child: child,
+      child: BlocProvider(
+        create: (context) => WebRTCSessionBloc(call, database: database, logger: logger, webrtcSession: webrtcSession),
+        child: BlocProvider.value(
+          value: callBloc, 
+          child: BlocListener<OutgoingCallBloc, OutgoingCallState>(
+            listener: (context, state) async {
+              call.state = state.runtimeType.toString();
+              await database.saveCall(call, notify: false);
+            },
+            child: child,
+          ),
         ),
       ),
     );

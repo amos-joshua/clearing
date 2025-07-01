@@ -50,6 +50,8 @@ class _DiagnosticsCallStatesPageState extends State<DiagnosticsCallStatesPage> {
     return OutgoingCallBloc.provider(
       call: call,
       database: context.read<Database>(),
+      logger: context.read<LoggingService>(),
+      webrtcSession: null,
       callBloc: OutgoingCallBloc(
         database: context.read<Database>(),
         call,
@@ -66,6 +68,8 @@ class _DiagnosticsCallStatesPageState extends State<DiagnosticsCallStatesPage> {
     return IncomingCallBloc.provider(
       call: call,
       database: context.read<Database>(),
+      logger: context.read<LoggingService>(),
+      webrtcSession: null,
       callBloc: IncomingCallBloc(
         CallGatewayScripted([]),
         call,

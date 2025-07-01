@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import '../../../../webrtc/bloc/bloc.dart';
+import '../../../../webrtc/bloc/widgets/webrtc_call_status_widget.dart';
 import '../../../outgoing/widgets/hang_up_button.dart';
 import '../../../widgets/rtc_video_mixin.dart';
 import '../../bloc/incoming_call_bloc.dart';
@@ -43,6 +45,8 @@ class _OngoingCallWidgetState extends State<OngoingCallWidget>
     final remoteRtc = this.remoteRtc;
     return BlocBuilder<IncomingCallBloc, IncomingCallState>(
       builder: (context, state) {
+        final _ = context.watch<WebRTCSessionBloc>();
+
         if (state is! IncomingCallStateOngoing) {
           return const SizedBox.shrink();
         }
@@ -88,6 +92,8 @@ class _OngoingCallWidgetState extends State<OngoingCallWidget>
               ],
             ),
             const HangUpButton(isOutgoing: false),
+            const SizedBox(height: 20),
+            const WebRTCCallStatusWidget(),
           ],
         );
       },

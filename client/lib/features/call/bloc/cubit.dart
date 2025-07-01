@@ -5,20 +5,6 @@ import '../../../services/storage/database.dart';
 import '../../../services/storage/db_events.dart';
 import 'state.dart';
 
-/*
-class WebRTCSessionBuilder {
-  const WebRTCSessionBuilder();
-
-  WebRTCSession build() => WebRTCSession();
-}
-
-class WebRTCSessionBuilderLambda extends WebRTCSessionBuilder {
-  final WebRTCSession Function() builder;
-
-  WebRTCSessionBuilderLambda(this.builder);
-
-  WebRTCSession build() => builder();
-}*/
 
 class CallsCubit extends Cubit<CallsState> {
   final Database database;

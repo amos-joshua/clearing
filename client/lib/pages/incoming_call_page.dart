@@ -5,6 +5,7 @@ import '../features/call/model/call.dart';
 import '../features/call/model/call_event.dart';
 import '../features/call/incoming/bloc/incoming_call_bloc.dart';
 import '../features/call/incoming/incoming_call_widget.dart';
+import '../services/logging/logging_service.dart';
 import '../services/storage/database.dart';
 
 class IncomingCallPage extends StatelessWidget {
@@ -25,6 +26,8 @@ class IncomingCallPage extends StatelessWidget {
       call: call,
       callBloc: callBloc,
       database: context.read<Database>(),
+      logger: context.read<LoggingService>(),
+      webrtcSession: callBloc.webrtcSession,
       child: Builder(
         builder: (context) => _scaffold(
           context,

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../features/call/model/call_event.dart';
 import '../features/call/outgoing/bloc/outgoing_call_bloc.dart';
 import '../features/call/outgoing/outgoing_call_widget.dart';
+import '../services/logging/logging_service.dart';
 import '../services/storage/database.dart';
 
 class OutgoingCallPage extends StatelessWidget {
@@ -25,6 +26,8 @@ class OutgoingCallPage extends StatelessWidget {
       call: call,
       callBloc: callBloc,
       database: context.read<Database>(),
+      logger: context.read<LoggingService>(),
+      webrtcSession: callBloc.webrtcSession,
       child: Builder(
         builder: (context) => _scaffold(
           context,

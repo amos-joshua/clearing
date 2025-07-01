@@ -177,4 +177,10 @@ class WebRTCSession {
     localStream = null;
     iceCandidates.clear();
   }
+
+  void signalCallAudioProblem() {
+    _stateStreamController.add(WebRTCSessionEventPeerConnectionState(
+      webrtc.RTCPeerConnectionState.RTCPeerConnectionStateFailed.name,
+    ));
+  }
 }

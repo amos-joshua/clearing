@@ -1,36 +1,37 @@
 import 'dart:async';
 
-import '../../features/call/model/call.dart';
-import '../../services/logging/logging_service.dart';
-import '../../services/storage/database.dart';
-import 'webrtc_session.dart';
-import 'webrtc_session_updates.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class WebRTCCallInfoUpdater {
+import '../../../services/logging/logging_service.dart';
+import '../../../services/storage/database.dart';
+import '../../../utils/webrtc/webrtc_session.dart';
+import '../../../utils/webrtc/webrtc_session_updates.dart';
+import '../../call/model/call.dart';
+import 'state.dart';
+
+class WebRTCSessionBloc extends Bloc<WebRTCSessionEvent, WebRTCSessionState> {
   final Database _database;
   final Call _call;
-  final WebRTCSession _webrtcSession;
+  final WebRTCSession? _webrtcSession;
   final LoggingService _logger;
 
   StreamSubscription<WebRTCSessionEvent>? _eventSubscription;
 
-  WebRTCCallInfoUpdater({
-    required Database database,
-    required Call call,
-    required WebRTCSession webrtcSession,
-    required LoggingService logger,
-  })  : _database = database,
-        _call = call,
-        _webrtcSession = webrtcSession,
-        _logger = logger {
-    _startListening();
+  WebRTCSessionBloc(this._call, {required Database database, required LoggingService logger, required WebRTCSession? webrtcSession}) : _database = database, _logger = logger, _webrtcSession = webrtcSession, super(WebRTCSessionState(call: _call, nonce: 0)) {
+    on<WebRTCSessionEventPeerConnectionState>(_handleEvent);
+    on<WebRTCSessionEventIceConnectionState>(_handleEvent);
+    on<WebRTCSessionEventIceGatheringState>(_handleEvent);
+    on<WebRTCSessionEventSignalingState>(_handleEvent);
+    on<WebRTCSessionEventSDPOffer>(_handleEvent);
+    on<WebRTCSessionEventSDPAnswer>(_handleEvent);
+    on<WebRTCSessionEventGenerateIceCandidates>(_handleEvent);
+
+    _eventSubscription = _webrtcSession?.stateStream.listen((event) {
+      add(event);
+    });
   }
 
-  void _startListening() {
-    _eventSubscription = _webrtcSession.stateStream.listen(_handleEvent);
-  }
-
-  void _handleEvent(WebRTCSessionEvent event) {
+  void _handleEvent(WebRTCSessionEvent event, Emitter<WebRTCSessionState> emit) {
 
     switch (event) {
       case WebRTCSessionEventPeerConnectionState():
@@ -77,6 +78,7 @@ class WebRTCCallInfoUpdater {
         _call.addLog('add_local_stream_track', 'Added local stream: $description');
     }
     _saveCall();
+    emit(state.copyWith(call: _call, nonce: state.nonce + 1));
   }
 
   Future<void> _saveCall() async {

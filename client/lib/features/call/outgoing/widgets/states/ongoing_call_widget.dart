@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import '../../../../webrtc/bloc/bloc.dart';
+import '../../../../webrtc/bloc/widgets/webrtc_call_status_widget.dart';
 import '../../../widgets/rtc_video_mixin.dart';
 import '../../bloc/outgoing_call_bloc.dart';
 import '../../bloc/outgoing_call_state.dart';
@@ -41,6 +43,7 @@ class _OngoingCallWidgetState extends State<OngoingCallWidget>
   @override
   Widget build(BuildContext context) {
     final remoteRtc = this.remoteRtc;
+    final _ = context.watch<WebRTCSessionBloc>();
 
     return BlocBuilder<OutgoingCallBloc, OutgoingCallState>(
       builder: (context, state) {
@@ -76,7 +79,7 @@ class _OngoingCallWidgetState extends State<OngoingCallWidget>
                       setMicMuteEnabled(context, micMuted);
                     });
                   },
-                  icon: Icon(micMuted ? Icons.mic : Icons.mic_off),
+                  icon: Icon(micMuted ? Icons.mic_off : Icons.mic),
                 ),
                 IconButton(
                   onPressed: () {
@@ -90,6 +93,8 @@ class _OngoingCallWidgetState extends State<OngoingCallWidget>
               ],
             ),
             const HangUpButton(isOutgoing: true),
+            const SizedBox(height: 20),
+            const WebRTCCallStatusWidget(),
           ],
         );
       },

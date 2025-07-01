@@ -1,3 +1,4 @@
+import 'package:flutter_webrtc/flutter_webrtc.dart' show RTCPeerConnectionState;
 import 'package:objectbox/objectbox.dart';
 import 'package:uuid/uuid.dart';
 
@@ -75,6 +76,10 @@ class Call {
     );
     logEntries.add(logEntry);
   }
+
+  bool get webRTCConnectionFailed =>
+      webRTCPeerConnectionState ==
+      RTCPeerConnectionState.RTCPeerConnectionStateFailed.name;
 }
 
 @Entity()

@@ -19,16 +19,6 @@ mixin RtcVideoMixin {
     if (localStream != null) {
       localRtc?.srcObject = localStream;
     }
-
-    // NOTE: sanity check
-    Future.delayed(const Duration(seconds: 1), () {
-      final stream = remoteRtc?.srcObject;
-      if (stream == null || stream.getAudioTracks().isEmpty) {
-        print('⚠️ No remote audio tracks found even after connection!');
-      } else {
-        print('✅ Remote audio tracks: ${stream.getAudioTracks().length}');
-      }
-    });
   }
 
   void disposeWebRTC() {
