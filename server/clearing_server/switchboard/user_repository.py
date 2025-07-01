@@ -119,7 +119,7 @@ class UserRepositoryFirebase(UserRepositoryBase):
             except Exception as exc:
                 self.log.error(
                     CallIdentifiable(call_uuid, CallDirection.SENDER),
-                    "Could not retrieve user corresponding to email '{email}'",
+                    f"Could not retrieve user corresponding to email '{email}'",
                     error=exc,
                     stacktrace=traceback.format_exc(),
                 )
