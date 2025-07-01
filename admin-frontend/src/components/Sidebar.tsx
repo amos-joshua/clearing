@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Settings, LogOut, User, AlertCircle } from 'lucide-react';
+import { Home, Settings, LogOut, User, AlertCircle, Users } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useFirebaseData } from '../hooks/useFirebaseData';
 import { useViewedLogs } from '../hooks/useViewedLogs';
@@ -60,6 +60,17 @@ export default function Sidebar() {
           >
             <Settings className="w-5 h-5" />
             <span>Settings</span>
+          </Link>
+
+          <Link
+            to="/users"
+            className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${isActive('/users')
+              ? 'bg-blue-600 text-white'
+              : 'text-gray-300 hover:bg-gray-800'
+              }`}
+          >
+            <Users className="w-5 h-5" />
+            <span>Users</span>
           </Link>
         </div>
 

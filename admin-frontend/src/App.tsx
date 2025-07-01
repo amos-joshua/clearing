@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Users from './pages/Users';
+import UserDetail from './pages/UserDetail';
 import Settings from './pages/Settings';
 import CallDetails from './pages/CallDetails';
 import ServerLogs from './pages/ServerLogs';
@@ -59,6 +61,8 @@ function App() {
           >
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="users" element={<Users />} />
+            <Route path="users/:userId" element={<UserDetail />} />
             <Route path="settings" element={<Settings />} />
             <Route path="call/:callId" element={<CallDetails />} />
             <Route path="server-logs" element={<ServerLogs />} />
