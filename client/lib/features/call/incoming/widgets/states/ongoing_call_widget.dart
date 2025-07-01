@@ -74,14 +74,14 @@ class _OngoingCallWidgetState extends State<OngoingCallWidget>
                       setMicMuteEnabled(context, micMuted);
                     });
                   },
-                  icon: Icon(micMuted ? Icons.mic : Icons.mic_off),
+                  icon: Icon(micMuted ? Icons.mic_off : Icons.mic),
                 ),
                 IconButton(
                   onPressed: () {
                     setState(() {
                       speakerphoneOn = !speakerphoneOn;
                       setSpeakerphone(context, speakerphoneOn);
-                    }); 
+                    });
                   },
                   icon: Icon(speakerphoneOn ? Icons.speaker : Icons.headset),
                 ),

@@ -72,6 +72,13 @@ mixin RtcVideoMixin {
   void _showSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+          duration: const Duration(seconds: 1),
+          margin: const EdgeInsets.all(5.0),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
   }
 }
