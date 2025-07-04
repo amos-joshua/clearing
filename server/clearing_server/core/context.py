@@ -7,6 +7,9 @@ from clearing_server.core.model.events import (
     CallEvent,
 )
 from clearing_server.core.model.users import User
+from clearing_server.core.turn_stun_server_list_generator_base import (
+    TurnStunServerListGeneratorBase,
+)
 from clearing_server.core.user_repository_base import UserRepositoryBase
 
 
@@ -17,12 +20,14 @@ class CallContext:
         users: UserRepositoryBase,
         log: LogBase,
         config: ServerConfig,
+        turn_server_generator: TurnStunServerListGeneratorBase,
     ):
         self.log = log
         self.sinks = sinks
         self.users = users
         self.config = config
         self.authenticated_user: User | None = None
+        self.turn_server_generator = turn_server_generator
 
     def authenticate_receiver_event(
         self, call: CallIdentifiable, event: CallEvent

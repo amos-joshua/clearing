@@ -49,7 +49,10 @@ class FirebaseEmulatorUserManager:
                 "emailVerified": True,
                 "phoneNumber": phone_number,
             },
-            headers={"Content-Type": "application/json", "Authorization": "Bearer owner"},
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": "Bearer owner",
+            },
         )
 
         error = resp.json().get("error", None)
@@ -58,9 +61,11 @@ class FirebaseEmulatorUserManager:
                 f"Could not update user {display_name}/{data["localId"]} with phone number {phone_number}: {resp.json()}"
             )
 
-
         user = User(
-            name=data["displayName"], phone_number=phone_number, email=data["email"], uid=data["localId"]
+            name=data["displayName"],
+            phone_number=phone_number,
+            email=data["email"],
+            uid=data["localId"],
         )
         device = (
             self._create_mock_device_entry_for_user(user)

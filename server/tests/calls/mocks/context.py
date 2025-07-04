@@ -3,6 +3,7 @@ from clearing_server.core.context import CallContext
 from clearing_server.core.event_sinks import EventSinks
 from clearing_server.core.model.users import User, Device
 from clearing_server.core.model.config import ServerConfig
+from tests.calls.mocks.turn_server_generator_mock import TurnStunServerListGeneratorMock
 from tests.calls.mocks.call_log import MockLog
 from tests.calls.mocks.sinks import MockEventSinks
 from tests.calls.mocks.users import mock_users_repository
@@ -21,7 +22,7 @@ class MockCallContext(CallContext):
             server_host='127.0.0.1',
             server_port='314159'
         )
-        super().__init__(sinks=self.mock_sinks, users=self.mock_users, log=self.mock_log, config=config)
+        super().__init__(sinks=self.mock_sinks, users=self.mock_users, log=self.mock_log, config=config, turn_server_generator=TurnStunServerListGeneratorMock())
 
 
 class MockCallContextWithSinks(CallContext):
@@ -37,5 +38,5 @@ class MockCallContextWithSinks(CallContext):
             server_port='314159'
         )
 
-        super().__init__(sinks=sinks, users=self.mock_users, log=self.mock_log, config=config)
+        super().__init__(sinks=sinks, users=self.mock_users, log=self.mock_log, config=config, turn_server_generator=TurnStunServerListGeneratorMock())
 

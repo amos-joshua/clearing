@@ -1,4 +1,5 @@
-from clearing_server.core.model.events import SenderCallInit, SenderHangUp, IncomingCallInit
+from clearing_server.core.model.events import SenderCallInit, SenderHangUp, IncomingCallInit, SenderAuthorize, \
+    TurnServers
 from clearing_server.core.model.users import User, Device
 from clearing_server.calls.outgoing.call import OutgoingCallState, OutgoingCall
 from clearing_server.calls.errors import CallParticipantAuthenticationFailure, RecipientNotRegistered
@@ -8,8 +9,11 @@ from tests.calls.mocks.context import MockCallContext
 
 call_uuid1 = 'mocks-call-2'
 
-init_event1 = SenderCallInit(
+authorize_event = SenderAuthorize(
     client_token_id = "token1",
+)
+
+init_event1 = SenderCallInit(
     receiver_phone_numbers=["+15550001"],
     urgency="leisure",
     subject="subject1",
@@ -64,7 +68,19 @@ async def test_idle_process_sender_init_call():
     )
 
     # WHEN
-    # it processes a SenderInitCall event
+    # it processes an Authorize event
+    result = await state_machine.process_sender_event(call, authorize_event)
+
+    # THEN
+    # the state should be AUTHORIZED
+    assert call.state == OutgoingCallState.AUTHORIZED
+    # and the sender should have received the turn server list
+    assert len(context.mock_sinks.mock_client_sink.events) == 1
+    sender_event = context.mock_sinks.mock_client_sink.events[0]
+    assert isinstance(sender_event, TurnServers)
+
+    # WHEN
+    # it processes a SenderInitEvent
     result = await state_machine.process_sender_event(call, init_event1)
 
     # THEN
@@ -80,8 +96,8 @@ async def test_idle_process_sender_init_call():
     assert isinstance(receiver_event, IncomingCallInit)
     # the recipients were updated on the call
     context.mock_users.update_recipients_for_call.assert_called_once_with(call.uuid, [mock_recipient1])
-    # the sender/receiver queues are empty
-    assert len(context.mock_sinks.mock_client_sink.events) == 0
+    # the sender queue still contains only one event and the receiver queue 0
+    assert len(context.mock_sinks.mock_client_sink.events) == 1
     assert len(context.mock_sinks.mock_message_broker_sink.events) == 0
     # and a timeout should have been scheduled
     call.timeout_scheduler.schedule_timeout.assert_called_once()
@@ -132,7 +148,8 @@ async def test_idle_process_sender_init_call_no_recipient():
     )
 
     # WHEN
-    # it processes a SenderInitCall event
+    # it processes an SenderAuthorize and then a SenderInitCall event
+    result = await state_machine.process_sender_event(call, authorize_event)
     result = await state_machine.process_sender_event(call, init_event1)
 
     # THEN
@@ -142,10 +159,13 @@ async def test_idle_process_sender_init_call_no_recipient():
     assert context.mock_log.warning_entry_count() == 0
     assert context.mock_log.error_entry_count() == 1
     assert isinstance(result, RecipientNotRegistered) == True
-    # and the queues should all be empty
-    assert len(context.mock_sinks.mock_client_sink.events) == 0
+    # and the message_broker and push notification queues should be empty
     assert len(context.mock_sinks.mock_message_broker_sink.events) == 0
     assert len(context.mock_sinks.mock_push_notifications_sink.events) == 0
+    # but the sender queue should have a turn servers event
+    assert len(context.mock_sinks.mock_client_sink.events) == 1
+    sender_event = context.mock_sinks.mock_client_sink.events[0]
+    assert isinstance(sender_event, TurnServers)
 
 
 async def test_calling_process_sender_hang_up():

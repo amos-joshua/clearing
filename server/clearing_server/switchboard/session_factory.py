@@ -15,6 +15,9 @@ from clearing_server.message_queues.rabbitmq_call_channel import (
     RabbitMQCallChannel,
 )
 from clearing_server.session.session import CallSession
+from clearing_server.switchboard.turn_stun_server_list_generator import (
+    TurnStunServerListGenerator,
+)
 from clearing_server.switchboard.websocket_channel import WebSocketChannel
 
 
@@ -58,6 +61,9 @@ class SessionFactory:
             users=self.users,
             log=self.users.log,
             config=self.config,
+            turn_server_generator=TurnStunServerListGenerator(
+                config=self.config, users=self.users
+            ),
         )
 
         call = OutgoingCall(call_uuid, context)
@@ -103,6 +109,9 @@ class SessionFactory:
             users=self.users,
             log=self.users.log,
             config=self.config,
+            turn_server_generator=TurnStunServerListGenerator(
+                config=self.config, users=self.users
+            ),
         )
 
         call = IncomingCall(call_uuid, context)

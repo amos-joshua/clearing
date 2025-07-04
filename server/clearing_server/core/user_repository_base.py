@@ -23,7 +23,9 @@ class UserRepositoryBase:
     ) -> User:
         raise NotImplemented()
 
-    def users_for_phone_numbers(self, call_uuid: str, phone_numbers: list[str]) -> list[User]:
+    def users_for_phone_numbers(
+        self, call_uuid: str, phone_numbers: list[str]
+    ) -> list[User]:
         raise NotImplemented()
 
     def devices_for_users(
@@ -52,4 +54,10 @@ class UserRepositoryBase:
         raise NotImplemented()
 
     def user_info_by_uid(self, uid: str) -> dict | None:
+        raise NotImplemented()
+
+    def user_stats_daily_call_count_increment(self, user_uid: str):
+        raise NotImplemented()
+
+    def user_stats_daily_call_count(self, user_uid: str):
         raise NotImplemented()

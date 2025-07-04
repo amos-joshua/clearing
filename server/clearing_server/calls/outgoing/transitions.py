@@ -16,14 +16,35 @@ from clearing_server.core.model.events import (
     ReceiverBusy,
     ReceiverHangUp,
     ReceiverReject,
+    SenderAuthorize,
     SenderCallInit,
     SenderDisconnected,
     SenderHangUp,
     SenderIceCandidates,
+    TurnServers,
 )
 
 
 async def idle_process_sender_events(call: OutgoingCall, event: CallEvent):
+    if isinstance(event, SenderAuthorize):
+        turn_servers = call.context.turn_server_generator.generate_list(
+            call.context.authenticated_user.uid
+        )
+        await call.client_sink(TurnServers(turn_servers=turn_servers))
+        call.transition_to(OutgoingCallState.AUTHORIZED, event)
+    elif isinstance(event, SenderDisconnected):
+        call.transition_to(OutgoingCallState.ENDED, event)
+    else:
+        call.context.log.warn(
+            call,
+            f"Unexpected sender event '{type(event).__name__}', only {CallEvents.SENDER_AUTHORIZE} is valid in the current state",
+        )
+        raise UnexpectedEvent(event)
+
+
+async def authorized_process_sender_events(
+    call: OutgoingCall, event: CallEvent
+):
     try:
         if isinstance(event, SenderCallInit):
             sender = call.context.authenticated_user
@@ -44,7 +65,11 @@ async def idle_process_sender_events(call: OutgoingCall, event: CallEvent):
             device_token_ids = [device.token for device in devices]
             call.context.users.update_recipients_for_call(call.uuid, recipients)
             pn_request = IncomingCallInit.for_call(
-                call.uuid, sender.phone_number, sender.name, device_token_ids, event
+                call.uuid,
+                sender.phone_number,
+                sender.name,
+                device_token_ids,
+                event,
             )
             await call.push_notifications_sink(pn_request)
             call.transition_to(OutgoingCallState.CALLING, event)

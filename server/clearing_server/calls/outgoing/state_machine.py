@@ -1,4 +1,5 @@
 from clearing_server.calls.outgoing.transitions import (
+    authorized_process_sender_events,
     calling_process_receiver_events,
     calling_process_sender_events,
     idle_process_sender_events,
@@ -18,6 +19,7 @@ from .state import OutgoingCallState
 class OutgoingCallStateMachine(CallStateMachineBase[OutgoingCall]):
 
     sender_event_transitions = {
+        OutgoingCallState.AUTHORIZED: authorized_process_sender_events,
         OutgoingCallState.IDLE: idle_process_sender_events,
         OutgoingCallState.CALLING: calling_process_sender_events,
         OutgoingCallState.RINGING: ringing_process_sender_events,

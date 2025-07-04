@@ -46,7 +46,9 @@ class UserRepositoryFirebase(UserRepositoryBase):
         except:
             raise CallParticipantAuthenticationFailure()
         return User(
-            name=decoded_token.get("name", decoded_token.get("email", "Unknown")),
+            name=decoded_token.get(
+                "name", decoded_token.get("email", "Unknown")
+            ),
             uid=decoded_token["uid"],
             phone_number=decoded_token.get("phone_number", ""),
             email=decoded_token.get("email"),
@@ -100,15 +102,21 @@ class UserRepositoryFirebase(UserRepositoryBase):
         return recipient
 
     @override
-    def users_for_phone_numbers(self, call_uuid: str, phone_numbers: list[str]) -> list[User]:
+    def users_for_phone_numbers(
+        self, call_uuid: str, phone_numbers: list[str]
+    ) -> list[User]:
         users = []
         for phone_number in phone_numbers:
             try:
-                user_data = firebase_admin.auth.get_user_by_phone_number(phone_number)
+                user_data = firebase_admin.auth.get_user_by_phone_number(
+                    phone_number
+                )
                 if user_data:
                     users.append(
                         User(
-                            name=user_data.display_name or user_data.email or "Unknown",
+                            name=user_data.display_name
+                            or user_data.email
+                            or "Unknown",
                             phone_number=user_data.phone_number,
                             email=user_data.email,
                             uid=user_data.uid,
@@ -238,9 +246,7 @@ class UserRepositoryFirebase(UserRepositoryBase):
         if call_data is None:
             call_structure = self._get_call_structure()
             call_data = (
-                call_structure[direction.name]
-                if direction
-                else call_structure
+                call_structure[direction.name] if direction else call_structure
             )
             call_reference.update(call_data)
         return call_reference, call_data
@@ -275,3 +281,19 @@ class UserRepositoryFirebase(UserRepositoryBase):
             if isinstance(attr, property):
                 properties[name] = getattr(user, name)
         return properties
+
+    @override
+    def user_stats_daily_call_count_increment(self, user_uid: str):
+        call_count_path = self.config.firebase_user_stats_daily_call_count_path(
+            user_uid, datetime.datetime.now()
+        )
+        call_count_reference = firebase_admin.db.reference(call_count_path)
+        call_count_reference.transaction(lambda count: (count or 0) + 1)
+
+    @override
+    def user_stats_daily_call_count(self, user_uid: str):
+        call_count_path = self.config.firebase_user_stats_daily_call_count_path(
+            user_uid, datetime.datetime.now()
+        )
+        call_count_reference = firebase_admin.db.reference(call_count_path)
+        return call_count_reference.get() or 0

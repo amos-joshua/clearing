@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field, TypeAdapter
 
 
 class CallEvents(StrEnum):
+    SENDER_AUTHORIZE = auto()
     SENDER_CALL_INIT = auto()
     SENDER_ICE_CANDIDATES = auto()
     SENDER_HANG_UP = auto()
@@ -15,6 +16,7 @@ class CallEvents(StrEnum):
     RECEIVER_BUSY = auto()
     RECEIVER_ACCEPT = auto()
     RECEIVER_DISCONNECTED = auto()
+    TURN_SERVERS = auto()
     CALL_TIMEOUT = auto()
     INCOMING_CALL_INIT = auto()
     ERROR = auto()
@@ -33,7 +35,18 @@ class AuthenticatedEventBase(BaseModel):
     client_token_id: str
 
 
-class SenderCallInit(AuthenticatedEventBase):
+class SenderAuthorize(AuthenticatedEventBase):
+    call_event: Literal[CallEvents.SENDER_AUTHORIZE] = (
+        CallEvents.SENDER_AUTHORIZE
+    )
+
+
+class TurnServers(BaseModel):
+    call_event: Literal[CallEvents.TURN_SERVERS] = CallEvents.TURN_SERVERS
+    turn_servers: list[dict]
+
+
+class SenderCallInit(BaseModel):
     call_event: Literal[CallEvents.SENDER_CALL_INIT] = (
         CallEvents.SENDER_CALL_INIT
     )
@@ -109,9 +122,11 @@ class ReceiverReject(AuthenticatedEventBase):
     call_event: Literal[CallEvents.RECEIVER_REJECT] = CallEvents.RECEIVER_REJECT
     reason: str = ""
 
+
 class ReceiverBusy(AuthenticatedEventBase):
     call_event: Literal[CallEvents.RECEIVER_BUSY] = CallEvents.RECEIVER_BUSY
     reason: str = ""
+
 
 class ReceiverDisconnected(BaseModel):
     call_event: Literal[CallEvents.RECEIVER_DISCONNECTED] = (
@@ -143,11 +158,13 @@ CallEvent = Annotated[
         ReceiverBusy,
         ReceiverHangUp,
         ReceiverDisconnected,
+        SenderAuthorize,
         SenderCallInit,
         SenderIceCandidates,
         SenderDisconnected,
         IncomingCallInit,
         CallTimeout,
+        TurnServers,
         SenderHangUp,
         CallError,
     ],

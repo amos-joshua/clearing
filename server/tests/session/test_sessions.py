@@ -10,11 +10,12 @@ from clearing_server.calls.outgoing.state import OutgoingCallState
 from clearing_server.core.direction import CallDirection
 from clearing_server.core.event_sinks import EventSinks
 from clearing_server.core.model.events import ReceiverAck, SenderCallInit, SenderHangUp, ReceiverAccept, \
-    ReceiverHangUp, ReceiverReject
+    ReceiverHangUp, ReceiverReject, SenderAuthorize, TurnServers
 from clearing_server.core.model.users import User, Device
 from clearing_server.session.channel import CallChannel
 from clearing_server.session.session import CallSession
 from tests.calls.mocks.context import MockCallContextWithSinks, MockCallContext
+from tests.calls.test_outgoing_calls import authorize_event
 from tests.session.mocks.clients_brokers import ScriptedEventSource, MockMessageBroker
 
 call_uuid1 = "mocks-call-1"
@@ -43,9 +44,11 @@ mock_device1 = Device(
     description="Device 1"
 )
 
+authorize_event1 = SenderAuthorize(
+    client_token_id="token1"
+)
 
 init_event1 = SenderCallInit(
-    client_token_id = "token1",
     receiver_phone_numbers=["+15550001"],
     urgency="leisure",
     subject="subject1",
@@ -77,6 +80,10 @@ reject_event = ReceiverReject(
     client_token_id=token1
 )
 
+
+turn_servers_event = TurnServers(
+    turn_servers = [{'urls': ['stun.example.com:3478']}]
+)
 
 outgoing_state_machine = OutgoingCallStateMachine()
 incoming_state_machine = IncomingCallStateMachine()
@@ -125,6 +132,7 @@ async def test_outgoing_session_scenario1():
     # GIVEN
     # a client that initiates a call, then waits some and hangs up
     client = ScriptedEventSource(outgoing_events=[
+        authorize_event1,
         init_event1,
         0.5,
         sender_hangup_event
@@ -177,13 +185,14 @@ async def test_outgoing_session_scenario1():
     # the call is in the ENDED state
     assert call.state == OutgoingCallState.ENDED
     # the client received an ack event
-    assert client.incoming_events == [ack_event]
+    assert client.incoming_events == [turn_servers_event, ack_event]
 
 
 async def test_outgoing_session_scenario2():
     # GIVEN
     # a client that initiates a call
     client = ScriptedEventSource(outgoing_events=[
+        authorize_event1,
         init_event1,
     ])
     # a message broker which relays a ReceiverAck then a ReceiverAccept
@@ -232,7 +241,7 @@ async def test_outgoing_session_scenario2():
     # the call is in the ONGOING state
     assert call.state == OutgoingCallState.ONGOING
     # the client received an ack and an accept event
-    assert client.incoming_events == [ack_event, accept_event]
+    assert client.incoming_events == [turn_servers_event, ack_event, accept_event]
 
 async def test_incoming_session_scenario3():
     # GIVEN
@@ -347,6 +356,7 @@ async def test_incoming_and_outgoing_sessions_scenario5():
     # GIVEN
     # a sender client that initiates a call and eventually hangs up
     sender_client = ScriptedEventSource(outgoing_events=[
+        authorize_event1,
         init_event1,
         1,
         sender_hangup_event
@@ -435,6 +445,6 @@ async def test_incoming_and_outgoing_sessions_scenario5():
     assert out_call.state == OutgoingCallState.ENDED
     assert incoming_call.state == IncomingCallState.ENDED
     # the sender client received the ack and accept
-    assert sender_client.incoming_events == [ack_event, accept_event]
+    assert sender_client.incoming_events == [turn_servers_event, ack_event, accept_event]
     # and the receiver client received the init and hangup event
     assert receiver_client.incoming_events == [sender_hangup_event]

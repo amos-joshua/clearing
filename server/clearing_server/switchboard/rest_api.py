@@ -3,7 +3,7 @@ from typing import AsyncGenerator
 
 import aio_pika
 from aiormq import AMQPConnectionError
-from fastapi import Depends, FastAPI, Header, HTTPException, WebSocket, Query
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
@@ -98,7 +98,7 @@ def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
         if phone_number is not None and uid is not None:
             raise HTTPException(
                 status_code=400,
-                detail="Only one of 'phone_number' or 'uid' parameter should be provided"
+                detail="Only one of 'phone_number' or 'uid' parameter should be provided",
             )
 
         try:
@@ -109,17 +109,17 @@ def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
             else:
                 raise HTTPException(
                     status_code=400,
-                    detail="Either 'phone_number' or 'uid' parameter must be provided"
+                    detail="Either 'phone_number' or 'uid' parameter must be provided",
                 )
 
             if user_info_dict is None:
                 raise HTTPException(
                     status_code=404,
-                    detail=f"User not found with {'phone_number' if phone_number else 'uid'}: {phone_number or uid}"
+                    detail=f"User not found with {'phone_number' if phone_number else 'uid'}: {phone_number or uid}",
                 )
-            
+
             return user_info_dict
-            
+
         except HTTPException:
             # Re-raise HTTP exceptions as-is
             raise
@@ -131,7 +131,7 @@ def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
             )
             raise HTTPException(
                 status_code=500,
-                detail="Internal server error while retrieving user information"
+                detail="Internal server error while retrieving user information",
             )
 
     state_machine_outgoing = OutgoingCallStateMachine()
@@ -199,7 +199,5 @@ def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
                 },
             )
         return {"status": "ok"}
-    
-    
 
     return app

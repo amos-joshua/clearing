@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 from typing import List
 
@@ -82,6 +83,31 @@ class ServerConfig(BaseSettings):
         description="When set to True, the server will clear the database on startup. Only valid for the test and dev environments",
     )
 
+    clearing_turn_server_url: str = Field(
+        "",
+        description="URL of the clearing turn server",
+    )
+
+    clearing_turn_secret: str = Field(
+        "",
+        description="Secret for the clearing turn server",
+    )
+
+    clearing_turn_realm: str = Field(
+        "",
+        description="Realm for the clearing turn server",
+    )
+
+    clearing_turn_credential_lifetime_seconds: int = Field(
+        0,
+        description="Lifetime of the clearing turn credentials in seconds",
+    )
+
+    clearing_turn_daily_credential_limit: int = Field(
+        20,
+        description="Daily limit for per-user TURN credential generation",
+    )
+
     @property
     def is_dev_env(self):
         return self.environment == ServerEnvironment.dev
@@ -134,6 +160,12 @@ class ServerConfig(BaseSettings):
     @staticmethod
     def user_permissions_path(user_uid: str):
         return f"user_permissions/{user_uid}"
+
+    @staticmethod
+    def firebase_user_stats_daily_call_count_path(
+        user_uid: str, date: datetime
+    ):
+        return f"user_stats/{user_uid}/calls/{date.strftime('%Y-%m-%d')}/count"
 
     def firebase_emulator_db_url(self):
         return f"http://{self.firebase_emulator_host}:{self.firebase_emulator_db_port}?ns={self.environment.name}"

@@ -3,10 +3,11 @@ from enum import Enum
 
 class OutgoingCallState(Enum):
     IDLE = 0
-    CALLING = 1
-    RINGING = 2
-    ONGOING = 3
-    UNANSWERED = 4
-    REJECTED = 5
-    BUSY=6
-    ENDED = 7
+    AUTHORIZED = 1
+    CALLING = 2
+    RINGING = 3
+    ONGOING = 4
+    UNANSWERED = 5
+    REJECTED = 6
+    BUSY = 7
+    ENDED = 8
