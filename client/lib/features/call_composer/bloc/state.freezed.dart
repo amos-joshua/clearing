@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CallComposerState {
 
- String? get displayName; List<String> get contactEmails; CallUrgency get urgency; String get subject;
+ String? get displayName; List<String> get contactPhoneNumbers; CallUrgency get urgency; String get subject;
 /// Create a copy of CallComposerState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $CallComposerStateCopyWith<CallComposerState> get copyWith => _$CallComposerStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CallComposerState&&(identical(other.displayName, displayName) || other.displayName == displayName)&&const DeepCollectionEquality().equals(other.contactEmails, contactEmails)&&(identical(other.urgency, urgency) || other.urgency == urgency)&&(identical(other.subject, subject) || other.subject == subject));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CallComposerState&&(identical(other.displayName, displayName) || other.displayName == displayName)&&const DeepCollectionEquality().equals(other.contactPhoneNumbers, contactPhoneNumbers)&&(identical(other.urgency, urgency) || other.urgency == urgency)&&(identical(other.subject, subject) || other.subject == subject));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,displayName,const DeepCollectionEquality().hash(contactEmails),urgency,subject);
+int get hashCode => Object.hash(runtimeType,displayName,const DeepCollectionEquality().hash(contactPhoneNumbers),urgency,subject);
 
 @override
 String toString() {
-  return 'CallComposerState(displayName: $displayName, contactEmails: $contactEmails, urgency: $urgency, subject: $subject)';
+  return 'CallComposerState(displayName: $displayName, contactPhoneNumbers: $contactPhoneNumbers, urgency: $urgency, subject: $subject)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $CallComposerStateCopyWith<$Res>  {
   factory $CallComposerStateCopyWith(CallComposerState value, $Res Function(CallComposerState) _then) = _$CallComposerStateCopyWithImpl;
 @useResult
 $Res call({
- String? displayName, List<String> contactEmails, CallUrgency urgency, String subject
+ String? displayName, List<String> contactPhoneNumbers, CallUrgency urgency, String subject
 });
 
 
@@ -63,10 +63,10 @@ class _$CallComposerStateCopyWithImpl<$Res>
 
 /// Create a copy of CallComposerState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? displayName = freezed,Object? contactEmails = null,Object? urgency = null,Object? subject = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? displayName = freezed,Object? contactPhoneNumbers = null,Object? urgency = null,Object? subject = null,}) {
   return _then(_self.copyWith(
 displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
-as String?,contactEmails: null == contactEmails ? _self.contactEmails : contactEmails // ignore: cast_nullable_to_non_nullable
+as String?,contactPhoneNumbers: null == contactPhoneNumbers ? _self.contactPhoneNumbers : contactPhoneNumbers // ignore: cast_nullable_to_non_nullable
 as List<String>,urgency: null == urgency ? _self.urgency : urgency // ignore: cast_nullable_to_non_nullable
 as CallUrgency,subject: null == subject ? _self.subject : subject // ignore: cast_nullable_to_non_nullable
 as String,
@@ -80,15 +80,15 @@ as String,
 
 
 class _CallComposerState implements CallComposerState {
-  const _CallComposerState({required this.displayName, required final  List<String> contactEmails, required this.urgency, required this.subject}): _contactEmails = contactEmails;
+  const _CallComposerState({required this.displayName, required final  List<String> contactPhoneNumbers, required this.urgency, required this.subject}): _contactPhoneNumbers = contactPhoneNumbers;
   
 
 @override final  String? displayName;
- final  List<String> _contactEmails;
-@override List<String> get contactEmails {
-  if (_contactEmails is EqualUnmodifiableListView) return _contactEmails;
+ final  List<String> _contactPhoneNumbers;
+@override List<String> get contactPhoneNumbers {
+  if (_contactPhoneNumbers is EqualUnmodifiableListView) return _contactPhoneNumbers;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_contactEmails);
+  return EqualUnmodifiableListView(_contactPhoneNumbers);
 }
 
 @override final  CallUrgency urgency;
@@ -104,16 +104,16 @@ _$CallComposerStateCopyWith<_CallComposerState> get copyWith => __$CallComposerS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CallComposerState&&(identical(other.displayName, displayName) || other.displayName == displayName)&&const DeepCollectionEquality().equals(other._contactEmails, _contactEmails)&&(identical(other.urgency, urgency) || other.urgency == urgency)&&(identical(other.subject, subject) || other.subject == subject));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CallComposerState&&(identical(other.displayName, displayName) || other.displayName == displayName)&&const DeepCollectionEquality().equals(other._contactPhoneNumbers, _contactPhoneNumbers)&&(identical(other.urgency, urgency) || other.urgency == urgency)&&(identical(other.subject, subject) || other.subject == subject));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,displayName,const DeepCollectionEquality().hash(_contactEmails),urgency,subject);
+int get hashCode => Object.hash(runtimeType,displayName,const DeepCollectionEquality().hash(_contactPhoneNumbers),urgency,subject);
 
 @override
 String toString() {
-  return 'CallComposerState(displayName: $displayName, contactEmails: $contactEmails, urgency: $urgency, subject: $subject)';
+  return 'CallComposerState(displayName: $displayName, contactPhoneNumbers: $contactPhoneNumbers, urgency: $urgency, subject: $subject)';
 }
 
 
@@ -124,7 +124,7 @@ abstract mixin class _$CallComposerStateCopyWith<$Res> implements $CallComposerS
   factory _$CallComposerStateCopyWith(_CallComposerState value, $Res Function(_CallComposerState) _then) = __$CallComposerStateCopyWithImpl;
 @override @useResult
 $Res call({
- String? displayName, List<String> contactEmails, CallUrgency urgency, String subject
+ String? displayName, List<String> contactPhoneNumbers, CallUrgency urgency, String subject
 });
 
 
@@ -141,10 +141,10 @@ class __$CallComposerStateCopyWithImpl<$Res>
 
 /// Create a copy of CallComposerState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? displayName = freezed,Object? contactEmails = null,Object? urgency = null,Object? subject = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? displayName = freezed,Object? contactPhoneNumbers = null,Object? urgency = null,Object? subject = null,}) {
   return _then(_CallComposerState(
 displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
-as String?,contactEmails: null == contactEmails ? _self._contactEmails : contactEmails // ignore: cast_nullable_to_non_nullable
+as String?,contactPhoneNumbers: null == contactPhoneNumbers ? _self._contactPhoneNumbers : contactPhoneNumbers // ignore: cast_nullable_to_non_nullable
 as List<String>,urgency: null == urgency ? _self.urgency : urgency // ignore: cast_nullable_to_non_nullable
 as CallUrgency,subject: null == subject ? _self.subject : subject // ignore: cast_nullable_to_non_nullable
 as String,

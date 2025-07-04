@@ -6,6 +6,10 @@ part 'call_event.g.dart';
 enum CallEventType {
   @JsonValue('sender_call_init')
   senderCallInit,
+  @JsonValue('turn_servers')
+  turnServers,
+  @JsonValue('sender_authorize')
+  senderAuthorize,
   @JsonValue('sender_ice_candidates')
   senderIceCandidates,
   @JsonValue('sender_hang_up')
@@ -51,7 +55,8 @@ abstract class CallEvent with _$CallEvent {
   }) = TurnServers;
 
   const factory CallEvent.senderCallInit({
-    @JsonKey(name: 'receiver_emails') required List<String> receiverEmails,
+    @JsonKey(name: 'receiver_phone_numbers')
+    required List<String> receiverPhoneNumbers,
     required CallUrgency urgency,
     required String subject,
     @JsonKey(name: 'sdp_offer') required String sdpOffer,
@@ -68,7 +73,7 @@ abstract class CallEvent with _$CallEvent {
   const factory CallEvent.incomingCallInit({
     @JsonKey(name: 'call_uuid') required String callUuid,
     @JsonKey(name: 'caller_display_name') required String callerDisplayName,
-    @JsonKey(name: 'caller_email') required String callerEmail,
+    @JsonKey(name: 'caller_phone_number') required String callerPhoneNumber,
     required CallUrgency urgency,
     required String subject,
     @JsonKey(name: 'sdp_offer') required String sdpOffer,

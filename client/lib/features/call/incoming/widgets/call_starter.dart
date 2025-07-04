@@ -57,12 +57,12 @@ class _CallStarterState extends State<CallStarter> {
     final event = message.callEvent;
     if (event is IncomingCallInit) {
       final context = this.context;
-      final contact = await database.contactForEmails([event.callerEmail]);
+      final contact = await database.contactForPhoneNumbers([event.callerPhoneNumber]);
       if (context.mounted) {
         final call = Call(
           outgoing: false,
           callUuid: event.callUuid,
-          contactEmails: [event.callerEmail],
+          contactPhoneNumbers: [event.callerPhoneNumber],
           urgency: event.urgency,
           subject: event.subject,
           startTime: DateTime.now(),

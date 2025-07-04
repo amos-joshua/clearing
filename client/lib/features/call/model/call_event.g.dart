@@ -33,7 +33,7 @@ Map<String, dynamic> _$TurnServersToJson(TurnServers instance) =>
 
 SenderCallInit _$SenderCallInitFromJson(Map<String, dynamic> json) =>
     SenderCallInit(
-      receiverEmails: (json['receiver_emails'] as List<dynamic>)
+      receiverPhoneNumbers: (json['receiver_phone_numbers'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
       urgency: $enumDecode(_$CallUrgencyEnumMap, json['urgency']),
@@ -44,7 +44,7 @@ SenderCallInit _$SenderCallInitFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$SenderCallInitToJson(SenderCallInit instance) =>
     <String, dynamic>{
-      'receiver_emails': instance.receiverEmails,
+      'receiver_phone_numbers': instance.receiverPhoneNumbers,
       'urgency': _$CallUrgencyEnumMap[instance.urgency]!,
       'subject': instance.subject,
       'sdp_offer': instance.sdpOffer,
@@ -88,7 +88,7 @@ IncomingCallInit _$IncomingCallInitFromJson(Map<String, dynamic> json) =>
     IncomingCallInit(
       callUuid: json['call_uuid'] as String,
       callerDisplayName: json['caller_display_name'] as String,
-      callerEmail: json['caller_email'] as String,
+      callerPhoneNumber: json['caller_phone_number'] as String,
       urgency: $enumDecode(_$CallUrgencyEnumMap, json['urgency']),
       subject: json['subject'] as String,
       sdpOffer: json['sdp_offer'] as String,
@@ -99,7 +99,7 @@ Map<String, dynamic> _$IncomingCallInitToJson(IncomingCallInit instance) =>
     <String, dynamic>{
       'call_uuid': instance.callUuid,
       'caller_display_name': instance.callerDisplayName,
-      'caller_email': instance.callerEmail,
+      'caller_phone_number': instance.callerPhoneNumber,
       'urgency': _$CallUrgencyEnumMap[instance.urgency]!,
       'subject': instance.subject,
       'sdp_offer': instance.sdpOffer,

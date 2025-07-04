@@ -223,7 +223,6 @@ class ActiveCallService {
         webrtcSession = null;
       }
     }
-    final contact = await database.contactForEmails(call.contactEmails);
     final callBloc = IncomingCallBloc(
       callGateway,
       call,

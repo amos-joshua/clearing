@@ -16,7 +16,7 @@ class ContactTile extends StatelessWidget {
     return ListTile(
       leading: const Icon(Icons.account_circle),
       title: Text(contact.displayName),
-      subtitle: Text(contact.emails.isEmpty ? '(no email)' : contact.emails.join(', ')),
+      subtitle: Text(contact.phoneNumbers.isEmpty ? '(no phone number)' : contact.phoneNumbers.join(', ')),
       selected: isSelected,
       trailing: trailingIcon == null ? null : IconButton(
         icon: trailingIcon,

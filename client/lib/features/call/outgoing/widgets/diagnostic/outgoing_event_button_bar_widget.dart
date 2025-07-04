@@ -27,8 +27,7 @@ class OutgoingEventButtonBarWidget extends StatelessWidget {
       'Init Call - ${urgency.name}',
       () => context.read<OutgoingCallBloc>().add(
         events.SenderCallInit(
-          clientTokenId: '123',
-          receiverEmails: ['test@test.com'],
+          receiverPhoneNumbers: ['+15552345'],
           urgency: urgency,
           subject: 'Test',
           sdpOffer: '123',

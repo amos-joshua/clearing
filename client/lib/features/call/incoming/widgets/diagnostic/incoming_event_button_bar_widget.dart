@@ -18,7 +18,7 @@ class IncomingEventButtonBarWidget extends StatelessWidget {
             subject: 'Test Subject',
             urgency: urgency,
             callerDisplayName: 'Test Sender',
-            callerEmail: 'test@test.com',
+            callerPhoneNumber: '+15552345',
             sdpOffer: 'Test SDP Offer',
           ),
         );

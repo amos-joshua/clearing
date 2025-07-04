@@ -38,6 +38,10 @@ class AllContactsRepository extends ContactsRepository {
   @override
   Future<Contact?> getByEmail(String email) => storage.getContactByEmail(email);
 
+  @override
+  Future<Contact?> getByPhoneNumber(String phoneNumber) =>
+      storage.getContactByPhoneNumber(phoneNumber);
+
   GroupContactsRepository groupContactsRepository(ContactGroup group) =>
       GroupContactsRepository(group, storage: storage);
 }

@@ -246,12 +246,12 @@ class StartCallDialog {
   StartCallDialog(this.context);
 
   Future<Call?> show({
-    required List<String> emails,
+    required List<String> phoneNumbers,
     required String displayName,
     CallUrgency? urgency,
   }) async {
     //final currentCallCubit = context.read<CurrentCallCubit>();
-    if (emails.isEmpty) {
+    if (phoneNumbers.isEmpty) {
       AlertMessageDialog(context).show(
         title: 'Cannot call $displayName',
         message: 'The contact has no email address',
@@ -265,7 +265,7 @@ class StartCallDialog {
         content: BlocProvider(
           create: (context) => CallComposerBloc(
             database: context.read<Database>(),
-            emails: emails,
+            phoneNumbers: phoneNumbers,
             displayName: displayName,
             urgency: urgency,
           ),
@@ -282,7 +282,7 @@ class StartCallDialog {
 
   Future<Call?> showForContact(Contact contact) async {
     final call = await show(
-      emails: contact.emails,
+      phoneNumbers: contact.phoneNumbers,
       displayName: contact.displayName,
     );
     call?.contact.target = contact;
@@ -315,7 +315,7 @@ class CallInfoDialog {
             children: [
               _InfoRow(
                 call.outgoing ? 'Recipients:' : 'Caller:',
-                call.contactEmails.join(', '),
+                call.contactPhoneNumbers.join(', '),
               ),
               _InfoRow('Status:', call.state),
               _InfoRow('Urgency:', call.urgency.label()),
@@ -376,7 +376,7 @@ class CallInfoDialog {
     final debugInfo = StringBuffer();
     debugInfo.writeln('Call Information');
     debugInfo.writeln('===============');
-    debugInfo.writeln('contactEmails: ${call.contactEmails.join(', ')}');
+    debugInfo.writeln('contactPhoneNumbers: ${call.contactPhoneNumbers.join(', ')}');
     debugInfo.writeln('Status: ${call.state}');
     debugInfo.writeln('Urgency: ${call.urgency.label()}');
     if (call.subject.isNotEmpty) debugInfo.writeln('Subject: ${call.subject}');

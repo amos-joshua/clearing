@@ -5,6 +5,7 @@ abstract class ContactsRepository {
   Future<List<Contact>> contacts(String filter);
   Future<Contact?> get(String uid);
   Future<Contact?> getByEmail(String email);
+  Future<Contact?> getByPhoneNumber(String phoneNumber);
   Future<void> add(Contact contact);
   Future<void> remove(Contact contact);
   Future<void> clear();

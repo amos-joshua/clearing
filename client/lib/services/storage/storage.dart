@@ -12,6 +12,7 @@ abstract class Storage {
 
   Future<Contact?> getContactByUid(String uid);
   Future<Contact?> getContactByEmail(String email);
+  Future<Contact?> getContactByPhoneNumber(String phoneNumber);
   Future<void> saveContacts(List<Contact> contacts);
   Future<void> refreshContacts(List<Contact> contacts);
   Future<List<Contact>> loadContacts();

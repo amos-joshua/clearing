@@ -110,6 +110,14 @@ class PersistentStorage implements Storage {
         .findFirst();
   }
 
+  @override
+  Future<Contact?> getContactByPhoneNumber(String phoneNumber) async {
+    return _contacts
+        .query(Contact_.phoneNumbers.containsElement(phoneNumber))
+        .build()
+        .findFirst();
+  }
+
   // Groups
 
   @override

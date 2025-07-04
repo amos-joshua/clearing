@@ -39,6 +39,16 @@ class Database {
     return null;
   }
 
+  Future<Contact?> contactForPhoneNumbers(List<String> phoneNumbers) async {
+    for (final phoneNumber in phoneNumbers) {
+      final contact = await storage.getContactByPhoneNumber(phoneNumber);
+      if (contact != null) {
+        return contact;
+      }
+    }
+    return null;
+  }
+
   // Groups
   Future<List<ContactGroup>> groups(String filter) async {
     final groups = await storage.loadGroups();

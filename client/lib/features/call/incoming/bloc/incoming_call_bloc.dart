@@ -47,7 +47,7 @@ class IncomingCallBloc extends Bloc<CallEvent, IncomingCallState> {
     });
     _nativeNotifications.showCallNotification(
       _call.callUuid,
-      _call.contactEmails.first,
+      _call.contactPhoneNumbers.first,
       _call.subject,
       _call.urgency,
       RingType.ring,

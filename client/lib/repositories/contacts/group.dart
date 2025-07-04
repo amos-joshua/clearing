@@ -37,6 +37,11 @@ class GroupContactsRepository extends ContactsRepository {
       .firstOrNull;
 
   @override
+  Future<Contact?> getByPhoneNumber(String phoneNumber) async => _group.contacts
+      .where((contact) => contact.phoneNumbers.contains(phoneNumber))
+      .firstOrNull;
+
+  @override
   Future<void> remove(Contact contact) async {
     _group.contacts.remove(contact);
     await storage.saveGroup(_group);

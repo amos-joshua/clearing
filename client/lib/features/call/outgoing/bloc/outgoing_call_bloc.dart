@@ -79,7 +79,7 @@ class OutgoingCallBloc extends Bloc<CallEvent, OutgoingCallState> {
     }
     add(
       SenderCallInit(
-        receiverEmails: _call.contactEmails,
+        receiverPhoneNumbers: _call.contactPhoneNumbers,
         urgency: _call.urgency,
         subject: _call.subject,
         sdpOffer: sdpOffer,
@@ -94,7 +94,7 @@ class OutgoingCallBloc extends Bloc<CallEvent, OutgoingCallState> {
   ) {
     _call.subject = event.subject;
     _call.urgency = event.urgency;
-    _call.contactEmails = event.receiverEmails;
+    _call.contactPhoneNumbers = event.receiverPhoneNumbers;
     _sendEvent(event);
     emit(const OutgoingCallState.calling());
   }

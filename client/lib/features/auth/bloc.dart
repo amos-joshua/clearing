@@ -73,11 +73,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             onTimeout: () =>
                 throw TimeoutException('Login timed out after 40 seconds'),
           );
-      final currentUserEmail = await repository.loadCurrentUser();
-      if (currentUserEmail == null) {
+      final currentUser = await repository.loadCurrentUser();
+      if (currentUser == null) {
         throw Exception("Authentication failed, current user is null");
       }
-      emit(AuthStateSignedIn(currentUser: currentUserEmail));
+      emit(AuthStateSignedIn(currentUser: currentUser));
     } catch (exc) {
       if (exc is PhoneVerificationInitiatedException) {
         // Phone verification was initiated successfully, stay in signed out state

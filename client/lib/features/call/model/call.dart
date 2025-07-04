@@ -14,7 +14,7 @@ class Call {
   final logEntries = ToMany<LogEntry>();
 
   final contact = ToOne<Contact>();
-  List<String> contactEmails;
+  List<String> contactPhoneNumbers;
 
   bool get incoming => !outgoing;
   bool outgoing;
@@ -46,7 +46,7 @@ class Call {
     this.state = 'idle',
     this.outgoing = true,
     this.urgency = CallUrgency.leisure,
-    this.contactEmails = const [],
+    this.contactPhoneNumbers = const [],
     this.subject = '',
     DateTime? startTime,
     this.endTime,
@@ -60,7 +60,7 @@ class Call {
 
   @override
   String toString() =>
-      'Call(id $id, contactEmails: $contactEmails, subject: $subject, urgency: $urgency)';
+      'Call(id $id, contactPhoneNumbers: $contactPhoneNumbers, subject: $subject, urgency: $urgency)';
 
   static Call createOutgoing() =>
       Call(callUuid: const Uuid().v4(), outgoing: true);

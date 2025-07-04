@@ -28,7 +28,7 @@ class _PhoneAuthLoginButtonState extends State<PhoneAuthLoginButton> {
   @override
   void initState() {
     super.initState();
-    // Set a default country (US) - you could also detect user's location
+
     _selectedCountry = const CountryCode(
       name: 'United States',
       flag: '🇺🇸',

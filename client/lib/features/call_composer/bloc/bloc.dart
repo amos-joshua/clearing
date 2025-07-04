@@ -8,8 +8,8 @@ import 'state.dart';
 sealed class CallComposerEvent {}
 
 class CallComposerEventContactUpdated extends CallComposerEvent {
-  final List<String> emails;
-  CallComposerEventContactUpdated(this.emails);
+  final List<String> phoneNumbers;
+  CallComposerEventContactUpdated(this.phoneNumbers);
 }
 
 class CallComposerEventUrgencyUpdated extends CallComposerEvent {
@@ -27,13 +27,13 @@ class CallComposerBloc extends Bloc<CallComposerEvent, CallComposerState> {
 
   CallComposerBloc({
     required this.database,
-    required List<String> emails,
+    required List<String> phoneNumbers,
     required String? displayName,
     CallUrgency? urgency,
   }) : super(
          CallComposerState.forContact(
            displayName: displayName,
-           contactEmails: emails,
+           contactPhoneNumbers: phoneNumbers,
            urgency: urgency,
          ),
        ) {
@@ -46,7 +46,7 @@ class CallComposerBloc extends Bloc<CallComposerEvent, CallComposerState> {
     CallComposerEventContactUpdated event,
     Emitter<CallComposerState> emit,
   ) {
-    emit(state.copyWith(contactEmails: event.emails));
+    emit(state.copyWith(contactPhoneNumbers: event.phoneNumbers));
   }
 
   void _onUrgencyUpdated(
@@ -67,8 +67,8 @@ class CallComposerBloc extends Bloc<CallComposerEvent, CallComposerState> {
     final call = Call.createOutgoing();
     call.subject = state.subject;
     call.urgency = state.urgency;
-    call.contactEmails = state.contactEmails;
-    call.contact.target = await database.contactForEmails(state.contactEmails);
+    call.contactPhoneNumbers = state.contactPhoneNumbers;
+    call.contact.target = await database.contactForPhoneNumbers(state.contactPhoneNumbers);
     await database.saveCall(call);
     return call;
   }

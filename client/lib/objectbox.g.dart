@@ -337,7 +337,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(7, 2096184488857740476),
     name: 'Call',
-    lastPropertyId: const obx_int.IdUid(19, 9079258450306877994),
+    lastPropertyId: const obx_int.IdUid(20, 223529701330906098),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -380,12 +380,6 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(9, 8004556550347134573),
         name: 'callUuid',
         type: 9,
-        flags: 0,
-      ),
-      obx_int.ModelProperty(
-        id: const obx_int.IdUid(10, 2370978574062590214),
-        name: 'contactEmails',
-        type: 30,
         flags: 0,
       ),
       obx_int.ModelProperty(
@@ -437,6 +431,12 @@ final _entities = <obx_int.ModelEntity>[
         flags: 520,
         indexId: const obx_int.IdUid(8, 1327692473304755596),
         relationTarget: 'Contact',
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(20, 223529701330906098),
+        name: 'contactPhoneNumbers',
+        type: 30,
+        flags: 0,
       ),
     ],
     relations: <obx_int.ModelRelation>[
@@ -532,6 +532,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       1281735872941996336,
       5028019888053322518,
       7111780706480154241,
+      2370978574062590214,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -987,9 +988,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
       objectToFB: (Call object, fb.Builder fbb) {
         final subjectOffset = fbb.writeString(object.subject);
         final callUuidOffset = fbb.writeString(object.callUuid);
-        final contactEmailsOffset = fbb.writeList(
-          object.contactEmails.map(fbb.writeString).toList(growable: false),
-        );
         final sdpOfferOffset = fbb.writeString(object.sdpOffer);
         final sdpAnswerOffset = fbb.writeString(object.sdpAnswer);
         final webRTCPeerConnectionStateOffset = fbb.writeString(
@@ -1005,7 +1003,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
           object.webRTCSignalingState,
         );
         final stateOffset = fbb.writeString(object.state);
-        fbb.startTable(20);
+        final contactPhoneNumbersOffset = fbb.writeList(
+          object.contactPhoneNumbers
+              .map(fbb.writeString)
+              .toList(growable: false),
+        );
+        fbb.startTable(21);
         fbb.addInt64(0, object.id);
         fbb.addBool(2, object.outgoing);
         fbb.addOffset(3, subjectOffset);
@@ -1013,7 +1016,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(5, object.endTime?.millisecondsSinceEpoch);
         fbb.addInt64(7, object.dbUrgency);
         fbb.addOffset(8, callUuidOffset);
-        fbb.addOffset(9, contactEmailsOffset);
         fbb.addOffset(11, sdpOfferOffset);
         fbb.addOffset(12, sdpAnswerOffset);
         fbb.addOffset(13, webRTCPeerConnectionStateOffset);
@@ -1022,6 +1024,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(16, webRTCSignalingStateOffset);
         fbb.addOffset(17, stateOffset);
         fbb.addInt64(18, object.contact.targetId);
+        fbb.addOffset(19, contactPhoneNumbersOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1051,10 +1054,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
           8,
           false,
         );
-        final contactEmailsParam = const fb.ListReader<String>(
+        final contactPhoneNumbersParam = const fb.ListReader<String>(
           fb.StringReader(asciiOptimization: true),
           lazy: false,
-        ).vTableGet(buffer, rootOffset, 22, []);
+        ).vTableGet(buffer, rootOffset, 42, []);
         final subjectParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 10, '');
@@ -1088,7 +1091,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 callUuid: callUuidParam,
                 state: stateParam,
                 outgoing: outgoingParam,
-                contactEmails: contactEmailsParam,
+                contactPhoneNumbers: contactPhoneNumbersParam,
                 subject: subjectParam,
                 startTime: startTimeParam,
                 endTime: endTimeParam,
@@ -1424,48 +1427,48 @@ class Call_ {
     _entities[6].properties[6],
   );
 
-  /// See [Call.contactEmails].
-  static final contactEmails = obx.QueryStringVectorProperty<Call>(
-    _entities[6].properties[7],
-  );
-
   /// See [Call.sdpOffer].
   static final sdpOffer = obx.QueryStringProperty<Call>(
-    _entities[6].properties[8],
+    _entities[6].properties[7],
   );
 
   /// See [Call.sdpAnswer].
   static final sdpAnswer = obx.QueryStringProperty<Call>(
-    _entities[6].properties[9],
+    _entities[6].properties[8],
   );
 
   /// See [Call.webRTCPeerConnectionState].
   static final webRTCPeerConnectionState = obx.QueryStringProperty<Call>(
-    _entities[6].properties[10],
+    _entities[6].properties[9],
   );
 
   /// See [Call.webRTCIceConnectionState].
   static final webRTCIceConnectionState = obx.QueryStringProperty<Call>(
-    _entities[6].properties[11],
+    _entities[6].properties[10],
   );
 
   /// See [Call.webRTCIceGatheringState].
   static final webRTCIceGatheringState = obx.QueryStringProperty<Call>(
-    _entities[6].properties[12],
+    _entities[6].properties[11],
   );
 
   /// See [Call.webRTCSignalingState].
   static final webRTCSignalingState = obx.QueryStringProperty<Call>(
-    _entities[6].properties[13],
+    _entities[6].properties[12],
   );
 
   /// See [Call.state].
   static final state = obx.QueryStringProperty<Call>(
-    _entities[6].properties[14],
+    _entities[6].properties[13],
   );
 
   /// See [Call.contact].
   static final contact = obx.QueryRelationToOne<Call, Contact>(
+    _entities[6].properties[14],
+  );
+
+  /// See [Call.contactPhoneNumbers].
+  static final contactPhoneNumbers = obx.QueryStringVectorProperty<Call>(
     _entities[6].properties[15],
   );
 

@@ -139,21 +139,21 @@ class CallButton extends StatelessWidget {
   }
 }
 
-class ContactNameFromEmailsTile extends StatelessWidget {
-  final List<String> emails;
-  const ContactNameFromEmailsTile({required this.emails, super.key});
+class ContactNameFromPhoneNumbersTile extends StatelessWidget {
+  final List<String> phoneNumbers;
+  const ContactNameFromPhoneNumbersTile({required this.phoneNumbers, super.key});
 
   @override
   Widget build(BuildContext context) {
     final database = context.read<Database>();
     return FutureBuilder(
-      future: database.contactForEmails(emails),
+      future: database.contactForPhoneNumbers(phoneNumbers),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Text('...');
         }
         final contact = snapshot.data;
-        return Text(contact?.displayName ?? emails.firstOrNull ?? '(unknown)');
+        return Text(contact?.displayName ?? phoneNumbers.firstOrNull ?? '(unknown)');
       },
     );
   }
@@ -171,7 +171,7 @@ class CallTile extends StatelessWidget {
         CallInfoDialog(context).show(call);
       },
       leading: const Icon(Icons.account_circle_rounded),
-      title: ContactNameFromEmailsTile(emails: call.contactEmails),
+      title: ContactNameFromPhoneNumbersTile(phoneNumbers: call.contactPhoneNumbers),
       subtitle: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -191,12 +191,12 @@ class CallTile extends StatelessWidget {
       trailing: IconButton(
         onPressed: () async {
           final activeCallService = context.read<ActiveCallService>();
-          final contact = await context.read<Database>().contactForEmails(
-            call.contactEmails,
+          final contact = await context.read<Database>().contactForPhoneNumbers(
+            call.contactPhoneNumbers,
           );
           final displayName = switch (contact) {
             Contact() => contact.displayName,
-            null => call.contactEmails.firstOrNull ?? '(unknown)',
+            null => call.contactPhoneNumbers.firstOrNull ?? '(unknown)',
           };
 
           if (!context.mounted) {
@@ -207,7 +207,7 @@ class CallTile extends StatelessWidget {
           }
 
           final newCall = await StartCallDialog(context).show(
-            emails: call.contactEmails,
+            phoneNumbers: call.contactPhoneNumbers,
             displayName: displayName,
             urgency: call.urgency,
           );

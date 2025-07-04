@@ -8,18 +8,18 @@ part 'state.freezed.dart';
 sealed class CallComposerState with _$CallComposerState {
   const factory CallComposerState({
     required String? displayName,
-    required List<String> contactEmails,
+    required List<String> contactPhoneNumbers,
     required CallUrgency urgency,
     required String subject,
   }) = _CallComposerState;
 
   static CallComposerState forContact({
     required String? displayName,
-    required List<String> contactEmails,
+    required List<String> contactPhoneNumbers,
     CallUrgency? urgency,
   }) => CallComposerState(
     displayName: displayName,
-    contactEmails: contactEmails,
+    contactPhoneNumbers: contactPhoneNumbers,
     urgency: urgency ?? CallUrgency.leisure,
     subject: '',
   );

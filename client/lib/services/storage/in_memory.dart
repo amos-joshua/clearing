@@ -34,6 +34,13 @@ class InMemoryStorage extends Storage {
   }
 
   @override
+  Future<Contact?> getContactByPhoneNumber(String phoneNumber) async {
+    return _contacts
+        .where((contact) => contact.phoneNumbers.contains(phoneNumber))
+        .firstOrNull;
+  }
+
+  @override
   Future<void> saveContacts(List<Contact> contacts) async {
     _contacts = contacts;
   }

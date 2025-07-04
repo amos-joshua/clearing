@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../services/logging/logging_service.dart';
 import '../../model/call.dart';
 import '../../model/call_event.dart';
 
@@ -24,7 +23,7 @@ class IncomingCallHeaderWidget extends StatelessWidget {
     final call = RepositoryProvider.of<Call>(context);
 
     final displayName =
-        call.contact.target?.displayName ?? call.contactEmails.join(', ');
+        call.contact.target?.displayName ?? call.contactPhoneNumbers.join(', ');
 
     return Column(
       mainAxisSize: MainAxisSize.min,

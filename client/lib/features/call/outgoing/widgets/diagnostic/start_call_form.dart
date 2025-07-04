@@ -17,19 +17,19 @@ class DiagnosticStartCallForm extends StatefulWidget {
 class _DiagnosticStartCallFormState extends State<DiagnosticStartCallForm> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _uuidController;
-  late final TextEditingController _emailController;
+  late final TextEditingController _phoneNumberController;
 
   @override
   void initState() {
     super.initState();
     _uuidController = TextEditingController(text: const Uuid().v4());
-    _emailController = TextEditingController(text: 'user2@example.com');
+    _phoneNumberController = TextEditingController(text: '+15552345');
   }
 
   @override
   void dispose() {
     _uuidController.dispose();
-    _emailController.dispose();
+    _phoneNumberController.dispose();
     super.dispose();
   }
 
@@ -37,7 +37,7 @@ class _DiagnosticStartCallFormState extends State<DiagnosticStartCallForm> {
     if (_formKey.currentState?.validate() ?? false) {
       final call = Call(
         callUuid: _uuidController.text,
-        contactEmails: [_emailController.text],
+        contactPhoneNumbers: [_phoneNumberController.text],
       );
       final activeCallService = context.read<ActiveCallService>();
       await activeCallService.startOutgoingCall(
@@ -88,18 +88,15 @@ class _DiagnosticStartCallFormState extends State<DiagnosticStartCallForm> {
           ),
           const SizedBox(height: 16),
           TextFormField(
-            controller: _emailController,
+            controller: _phoneNumberController,
             decoration: const InputDecoration(
-              labelText: 'Email',
+              labelText: 'Phone number',
               border: OutlineInputBorder(),
             ),
-            keyboardType: TextInputType.emailAddress,
+            keyboardType: TextInputType.phone,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter an email';
-              }
-              if (!value.contains('@')) {
-                return 'Please enter a valid email';
+                return 'Please enter a phone number';
               }
               return null;
             },

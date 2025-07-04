@@ -11,10 +11,6 @@ class LoginFormMultichoice extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Column(
       children: [
-        //EmailPasswordLoginForm(),
-        //Divider(),
-        //GoogleLoginButton(),
-        //Divider(),
         PhoneAuthLoginButton(),
       ],
     );

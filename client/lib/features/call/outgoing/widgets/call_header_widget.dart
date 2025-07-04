@@ -23,7 +23,7 @@ class OutgoingCallHeaderWidget extends StatelessWidget {
     final call = RepositoryProvider.of<Call>(context);
 
     final displayName =
-        call.contact.target?.displayName ?? call.contactEmails.join(', ');
+        call.contact.target?.displayName ?? call.contactPhoneNumbers.join(', ');
 
     return Column(
       mainAxisSize: MainAxisSize.min,
