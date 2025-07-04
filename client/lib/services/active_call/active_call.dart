@@ -114,17 +114,11 @@ class ActiveCallService {
     final callGateway = await CallGatewayWebsocket.connect(
       appConfig.callEndpoint(callUuid: call.callUuid),
     );
-    String sdpOffer = '';
+
     WebRTCSession? webrtcSession;
     if (useWebrtc) {
       webrtcSession = WebRTCSession();
-      await webrtcSession.createPeerConnection();
-      sdpOffer = await webrtcSession.senderCreateSDPOffer();
-    } else {
-      sdpOffer = 'sdp-offer-mock';
     }
-    call.sdpOffer = sdpOffer;
-    await database.saveCall(call);
     final callBloc = OutgoingCallBloc(
       database: database,
       call,
@@ -132,15 +126,7 @@ class ActiveCallService {
       logger: logger,
       webrtcSession: webrtcSession,
     );
-    callBloc.add(
-      SenderCallInit(
-        clientTokenId: clientTokenId,
-        receiverEmails: call.contactEmails,
-        urgency: call.urgency,
-        subject: call.subject,
-        sdpOffer: sdpOffer,
-      ),
-    );
+    callBloc.add(SenderAuthorize(clientTokenId: clientTokenId));
     return callBloc;
   }
 
@@ -225,7 +211,7 @@ class ActiveCallService {
         call.sdpOffer = sdpOffer;
         await database.saveCall(call);
         webrtcSession = WebRTCSession();
-        await webrtcSession.createPeerConnection();
+        await webrtcSession.createPeerConnection([]);
         sdpAnswer = await webrtcSession.receiverProcessSDPOfferAndCreateAnswer(
           sdpOffer,
         );

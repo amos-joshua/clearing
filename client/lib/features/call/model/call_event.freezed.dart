@@ -16,7 +16,15 @@ CallEvent _$CallEventFromJson(
   Map<String, dynamic> json
 ) {
         switch (json['call_event']) {
-                  case 'sender_call_init':
+                  case 'sender_authorize':
+          return SenderAuthorize.fromJson(
+            json
+          );
+                case 'turn_servers':
+          return TurnServers.fromJson(
+            json
+          );
+                case 'sender_call_init':
           return SenderCallInit.fromJson(
             json
           );
@@ -111,11 +119,162 @@ $CallEventCopyWith(CallEvent _, $Res Function(CallEvent) __);
 /// @nodoc
 @JsonSerializable()
 
-class SenderCallInit implements CallEvent {
-  const SenderCallInit({@JsonKey(name: 'client_token_id') required this.clientTokenId, @JsonKey(name: 'receiver_emails') required final  List<String> receiverEmails, required this.urgency, required this.subject, @JsonKey(name: 'sdp_offer') required this.sdpOffer, final  String? $type}): _receiverEmails = receiverEmails,$type = $type ?? 'sender_call_init';
-  factory SenderCallInit.fromJson(Map<String, dynamic> json) => _$SenderCallInitFromJson(json);
+class SenderAuthorize implements CallEvent {
+  const SenderAuthorize({@JsonKey(name: 'client_token_id') required this.clientTokenId, final  String? $type}): $type = $type ?? 'sender_authorize';
+  factory SenderAuthorize.fromJson(Map<String, dynamic> json) => _$SenderAuthorizeFromJson(json);
 
 @JsonKey(name: 'client_token_id') final  String clientTokenId;
+
+@JsonKey(name: 'call_event')
+final String $type;
+
+
+/// Create a copy of CallEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SenderAuthorizeCopyWith<SenderAuthorize> get copyWith => _$SenderAuthorizeCopyWithImpl<SenderAuthorize>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$SenderAuthorizeToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SenderAuthorize&&(identical(other.clientTokenId, clientTokenId) || other.clientTokenId == clientTokenId));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,clientTokenId);
+
+@override
+String toString() {
+  return 'CallEvent.senderAuthorize(clientTokenId: $clientTokenId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SenderAuthorizeCopyWith<$Res> implements $CallEventCopyWith<$Res> {
+  factory $SenderAuthorizeCopyWith(SenderAuthorize value, $Res Function(SenderAuthorize) _then) = _$SenderAuthorizeCopyWithImpl;
+@useResult
+$Res call({
+@JsonKey(name: 'client_token_id') String clientTokenId
+});
+
+
+
+
+}
+/// @nodoc
+class _$SenderAuthorizeCopyWithImpl<$Res>
+    implements $SenderAuthorizeCopyWith<$Res> {
+  _$SenderAuthorizeCopyWithImpl(this._self, this._then);
+
+  final SenderAuthorize _self;
+  final $Res Function(SenderAuthorize) _then;
+
+/// Create a copy of CallEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? clientTokenId = null,}) {
+  return _then(SenderAuthorize(
+clientTokenId: null == clientTokenId ? _self.clientTokenId : clientTokenId // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class TurnServers implements CallEvent {
+  const TurnServers({@JsonKey(name: 'turn_servers') required final  List<Map<String, dynamic>> turnServers, final  String? $type}): _turnServers = turnServers,$type = $type ?? 'turn_servers';
+  factory TurnServers.fromJson(Map<String, dynamic> json) => _$TurnServersFromJson(json);
+
+ final  List<Map<String, dynamic>> _turnServers;
+@JsonKey(name: 'turn_servers') List<Map<String, dynamic>> get turnServers {
+  if (_turnServers is EqualUnmodifiableListView) return _turnServers;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_turnServers);
+}
+
+
+@JsonKey(name: 'call_event')
+final String $type;
+
+
+/// Create a copy of CallEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$TurnServersCopyWith<TurnServers> get copyWith => _$TurnServersCopyWithImpl<TurnServers>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$TurnServersToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TurnServers&&const DeepCollectionEquality().equals(other._turnServers, _turnServers));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_turnServers));
+
+@override
+String toString() {
+  return 'CallEvent.turnServers(turnServers: $turnServers)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $TurnServersCopyWith<$Res> implements $CallEventCopyWith<$Res> {
+  factory $TurnServersCopyWith(TurnServers value, $Res Function(TurnServers) _then) = _$TurnServersCopyWithImpl;
+@useResult
+$Res call({
+@JsonKey(name: 'turn_servers') List<Map<String, dynamic>> turnServers
+});
+
+
+
+
+}
+/// @nodoc
+class _$TurnServersCopyWithImpl<$Res>
+    implements $TurnServersCopyWith<$Res> {
+  _$TurnServersCopyWithImpl(this._self, this._then);
+
+  final TurnServers _self;
+  final $Res Function(TurnServers) _then;
+
+/// Create a copy of CallEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? turnServers = null,}) {
+  return _then(TurnServers(
+turnServers: null == turnServers ? _self._turnServers : turnServers // ignore: cast_nullable_to_non_nullable
+as List<Map<String, dynamic>>,
+  ));
+}
+
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class SenderCallInit implements CallEvent {
+  const SenderCallInit({@JsonKey(name: 'receiver_emails') required final  List<String> receiverEmails, required this.urgency, required this.subject, @JsonKey(name: 'sdp_offer') required this.sdpOffer, final  String? $type}): _receiverEmails = receiverEmails,$type = $type ?? 'sender_call_init';
+  factory SenderCallInit.fromJson(Map<String, dynamic> json) => _$SenderCallInitFromJson(json);
+
  final  List<String> _receiverEmails;
 @JsonKey(name: 'receiver_emails') List<String> get receiverEmails {
   if (_receiverEmails is EqualUnmodifiableListView) return _receiverEmails;
@@ -144,16 +303,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SenderCallInit&&(identical(other.clientTokenId, clientTokenId) || other.clientTokenId == clientTokenId)&&const DeepCollectionEquality().equals(other._receiverEmails, _receiverEmails)&&(identical(other.urgency, urgency) || other.urgency == urgency)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.sdpOffer, sdpOffer) || other.sdpOffer == sdpOffer));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SenderCallInit&&const DeepCollectionEquality().equals(other._receiverEmails, _receiverEmails)&&(identical(other.urgency, urgency) || other.urgency == urgency)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.sdpOffer, sdpOffer) || other.sdpOffer == sdpOffer));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,clientTokenId,const DeepCollectionEquality().hash(_receiverEmails),urgency,subject,sdpOffer);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_receiverEmails),urgency,subject,sdpOffer);
 
 @override
 String toString() {
-  return 'CallEvent.senderCallInit(clientTokenId: $clientTokenId, receiverEmails: $receiverEmails, urgency: $urgency, subject: $subject, sdpOffer: $sdpOffer)';
+  return 'CallEvent.senderCallInit(receiverEmails: $receiverEmails, urgency: $urgency, subject: $subject, sdpOffer: $sdpOffer)';
 }
 
 
@@ -164,7 +323,7 @@ abstract mixin class $SenderCallInitCopyWith<$Res> implements $CallEventCopyWith
   factory $SenderCallInitCopyWith(SenderCallInit value, $Res Function(SenderCallInit) _then) = _$SenderCallInitCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'client_token_id') String clientTokenId,@JsonKey(name: 'receiver_emails') List<String> receiverEmails, CallUrgency urgency, String subject,@JsonKey(name: 'sdp_offer') String sdpOffer
+@JsonKey(name: 'receiver_emails') List<String> receiverEmails, CallUrgency urgency, String subject,@JsonKey(name: 'sdp_offer') String sdpOffer
 });
 
 
@@ -181,10 +340,9 @@ class _$SenderCallInitCopyWithImpl<$Res>
 
 /// Create a copy of CallEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? clientTokenId = null,Object? receiverEmails = null,Object? urgency = null,Object? subject = null,Object? sdpOffer = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? receiverEmails = null,Object? urgency = null,Object? subject = null,Object? sdpOffer = null,}) {
   return _then(SenderCallInit(
-clientTokenId: null == clientTokenId ? _self.clientTokenId : clientTokenId // ignore: cast_nullable_to_non_nullable
-as String,receiverEmails: null == receiverEmails ? _self._receiverEmails : receiverEmails // ignore: cast_nullable_to_non_nullable
+receiverEmails: null == receiverEmails ? _self._receiverEmails : receiverEmails // ignore: cast_nullable_to_non_nullable
 as List<String>,urgency: null == urgency ? _self.urgency : urgency // ignore: cast_nullable_to_non_nullable
 as CallUrgency,subject: null == subject ? _self.subject : subject // ignore: cast_nullable_to_non_nullable
 as String,sdpOffer: null == sdpOffer ? _self.sdpOffer : sdpOffer // ignore: cast_nullable_to_non_nullable

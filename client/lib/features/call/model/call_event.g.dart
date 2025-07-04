@@ -6,9 +6,33 @@ part of 'call_event.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+SenderAuthorize _$SenderAuthorizeFromJson(Map<String, dynamic> json) =>
+    SenderAuthorize(
+      clientTokenId: json['client_token_id'] as String,
+      $type: json['call_event'] as String?,
+    );
+
+Map<String, dynamic> _$SenderAuthorizeToJson(SenderAuthorize instance) =>
+    <String, dynamic>{
+      'client_token_id': instance.clientTokenId,
+      'call_event': instance.$type,
+    };
+
+TurnServers _$TurnServersFromJson(Map<String, dynamic> json) => TurnServers(
+  turnServers: (json['turn_servers'] as List<dynamic>)
+      .map((e) => e as Map<String, dynamic>)
+      .toList(),
+  $type: json['call_event'] as String?,
+);
+
+Map<String, dynamic> _$TurnServersToJson(TurnServers instance) =>
+    <String, dynamic>{
+      'turn_servers': instance.turnServers,
+      'call_event': instance.$type,
+    };
+
 SenderCallInit _$SenderCallInitFromJson(Map<String, dynamic> json) =>
     SenderCallInit(
-      clientTokenId: json['client_token_id'] as String,
       receiverEmails: (json['receiver_emails'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
@@ -20,7 +44,6 @@ SenderCallInit _$SenderCallInitFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$SenderCallInitToJson(SenderCallInit instance) =>
     <String, dynamic>{
-      'client_token_id': instance.clientTokenId,
       'receiver_emails': instance.receiverEmails,
       'urgency': _$CallUrgencyEnumMap[instance.urgency]!,
       'subject': instance.subject,

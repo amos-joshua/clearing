@@ -41,8 +41,16 @@ enum CallUrgency {
 
 @Freezed(unionKey: 'call_event', unionValueCase: FreezedUnionCase.snake)
 abstract class CallEvent with _$CallEvent {
-  const factory CallEvent.senderCallInit({
+  const factory CallEvent.senderAuthorize({
     @JsonKey(name: 'client_token_id') required String clientTokenId,
+  }) = SenderAuthorize;
+
+  const factory CallEvent.turnServers({
+    @JsonKey(name: 'turn_servers')
+    required List<Map<String, dynamic>> turnServers,
+  }) = TurnServers;
+
+  const factory CallEvent.senderCallInit({
     @JsonKey(name: 'receiver_emails') required List<String> receiverEmails,
     required CallUrgency urgency,
     required String subject,

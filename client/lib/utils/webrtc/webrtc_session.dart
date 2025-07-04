@@ -14,9 +14,10 @@ class WebRTCSession {
       StreamController<WebRTCSessionEvent>.broadcast();
   Stream<WebRTCSessionEvent> get stateStream => _stateStreamController.stream;
 
-  Future<void> createPeerConnection() async {
+  Future<void> createPeerConnection(List<Map<String, dynamic>> turnServers) async {
     final currentPeerConnection = await webrtc.createPeerConnection({
       'iceServers': [
+        ...turnServers,
         {
           'urls': [
             'stun:stun1.l.google.com:19302',

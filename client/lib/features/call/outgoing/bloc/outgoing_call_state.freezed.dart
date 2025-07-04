@@ -77,6 +77,38 @@ String toString() {
 /// @nodoc
 
 
+class OutgoingCallStateAuthorized extends OutgoingCallState {
+  const OutgoingCallStateAuthorized(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OutgoingCallStateAuthorized);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'OutgoingCallState.authorized()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
 class OutgoingCallStateCalling extends OutgoingCallState {
   const OutgoingCallStateCalling(): super._();
   

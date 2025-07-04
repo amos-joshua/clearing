@@ -24,6 +24,7 @@ class OutgoingCallWidget extends StatelessWidget {
       color: call.urgency.backgroundColor,
       child: switch (bloc.state) {
         OutgoingCallStateIdle() => const IdleCallWidget(),
+        OutgoingCallStateAuthorized() => const CallingCallWidget(),
         OutgoingCallStateCalling() => const CallingCallWidget(),
         OutgoingCallStateRinging() => const RingingCallWidget(),
         OutgoingCallStateOngoing() => const OngoingCallWidget(),

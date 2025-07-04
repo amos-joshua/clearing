@@ -28,6 +28,8 @@ class OutgoingCallBloc extends Bloc<CallEvent, OutgoingCallState> {
   }) : _logger = logger,
        _database = database,
        super(const OutgoingCallState.idle()) {
+    on<SenderAuthorize>(_onSenderAuthorize);
+    on<TurnServers>(_onTurnServers);
     on<SenderCallInit>(_onSenderCallInit);
     on<SenderHangUp>(_onSenderHangUp);
     on<ReceiverAck>(_onReceiverAck);
@@ -56,6 +58,34 @@ class OutgoingCallBloc extends Bloc<CallEvent, OutgoingCallState> {
     _call.addLog('outgoing_remote_call_event', event.runtimeType.toString());
     await _database.saveCall(_call, notify: false);
     _callGateway.sendEvent(event);
+  }
+
+  void _onSenderAuthorize(
+    SenderAuthorize event,
+    Emitter<OutgoingCallState> emit,
+  ) {
+    _sendEvent(event);
+  }
+
+  void _onTurnServers(
+    TurnServers event,
+    Emitter<OutgoingCallState> emit,
+  ) async {
+    final webrtcSession = this.webrtcSession;
+    String sdpOffer = '';
+    if (webrtcSession != null) {
+      await webrtcSession.createPeerConnection(event.turnServers);
+      sdpOffer = await webrtcSession.senderCreateSDPOffer();
+    }
+    add(
+      SenderCallInit(
+        receiverEmails: _call.contactEmails,
+        urgency: _call.urgency,
+        subject: _call.subject,
+        sdpOffer: sdpOffer,
+      ),
+    );
+    emit(OutgoingCallState.authorized());
   }
 
   void _onSenderCallInit(
@@ -154,12 +184,14 @@ class OutgoingCallBloc extends Bloc<CallEvent, OutgoingCallState> {
     }
   }
 
-  void _sendBufferedIceCandidatesAndSwitchToStreaming(WebRTCSession webrtcSession) {
+  void _sendBufferedIceCandidatesAndSwitchToStreaming(
+    WebRTCSession webrtcSession,
+  ) {
     final iceCandidates = webrtcSession.senderGetIceCandidates();
-      webrtcSession.onIceCandidate = (iceCandidate) {
-        _sendEvent(SenderIceCandidates(iceCandidates: [iceCandidate]));
-      };
-      _sendEvent(SenderIceCandidates(iceCandidates: iceCandidates));
+    webrtcSession.onIceCandidate = (iceCandidate) {
+      _sendEvent(SenderIceCandidates(iceCandidates: [iceCandidate]));
+    };
+    _sendEvent(SenderIceCandidates(iceCandidates: iceCandidates));
   }
 
   static provider({
@@ -173,9 +205,14 @@ class OutgoingCallBloc extends Bloc<CallEvent, OutgoingCallState> {
     return RepositoryProvider.value(
       value: call,
       child: BlocProvider(
-        create: (context) => WebRTCSessionBloc(call, database: database, logger: logger, webrtcSession: webrtcSession),
+        create: (context) => WebRTCSessionBloc(
+          call,
+          database: database,
+          logger: logger,
+          webrtcSession: webrtcSession,
+        ),
         child: BlocProvider.value(
-          value: callBloc, 
+          value: callBloc,
           child: BlocListener<OutgoingCallBloc, OutgoingCallState>(
             listener: (context, state) async {
               call.state = state.runtimeType.toString();
