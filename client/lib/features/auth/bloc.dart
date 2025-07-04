@@ -79,7 +79,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
       emit(AuthStateSignedIn(currentUser: currentUserEmail));
     } catch (exc) {
-      emit(AuthStateSignedOut(error: exc.toString(), isLoggingIn: false));
+      if (exc is PhoneVerificationInitiatedException) {
+        // Phone verification was initiated successfully, stay in signed out state
+        // but don't set an error - the UI will handle this as success
+        emit(const AuthStateSignedOut(isLoggingIn: false));
+      } else {
+        emit(AuthStateSignedOut(error: exc.toString(), isLoggingIn: false));
+      }
     }
   }
 

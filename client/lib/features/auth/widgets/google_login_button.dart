@@ -52,7 +52,7 @@ class GoogleLoginButton extends StatelessWidget {
                         highlightColor: Colors.white,
                         child: const Text('Signing in...'),
                       )
-                    : const Text('Sign in with Google'),
+                    : const Text('Sign in with Gmail'),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),

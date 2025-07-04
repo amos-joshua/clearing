@@ -130,7 +130,7 @@ class SettingsPage extends StatelessWidget {
         ListTile(
           leading: const Icon(Icons.logout),
           title: const Text("Logout"),
-          subtitle: Text(currentUser?.email ?? ''),
+          subtitle: Text(currentUser?.phoneNumber ?? ''),
           onTap: () => signOut(context),
         ),
         ListTile(

@@ -16,3 +16,18 @@ class LoginMethodGoogle extends LoginMethod {
   @override
   String logInfo() => 'google signin';
 }
+
+class LoginMethodPhone extends LoginMethod {
+  final String phoneNumber;
+  final String? verificationId;
+  final String? smsCode;
+
+  @override
+  String logInfo() => 'phone: $phoneNumber';
+
+  LoginMethodPhone({
+    required this.phoneNumber,
+    this.verificationId,
+    this.smsCode,
+  });
+}

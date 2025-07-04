@@ -14,11 +14,14 @@ class LogoutButton extends StatelessWidget {
       throw "Logout button should only be shown when signed in";
     }
 
-    final currentEmail = authState.currentUser.email;
+    final currentPhoneNumber = switch (authState.currentUser.phoneNumber) {
+      String number when number.isEmpty => '(no number registered)',
+      String number => number,
+    };
     return ElevatedButton.icon(
       onPressed: () => auth.add(const Logout()),
       icon: const Icon(Icons.logout),
-      label: Text(currentEmail),
+      label: Text(currentPhoneNumber),
       iconAlignment: IconAlignment.end,
     );
   }

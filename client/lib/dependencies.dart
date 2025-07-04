@@ -80,6 +80,9 @@ class AppDependencies extends StatelessWidget {
         return MultiBlocProvider(
           providers: [
             AuthBloc.provider(appServices.authService, _loggingService),
+            RepositoryProvider<AuthServiceBase>.value(
+              value: appServices.authService,
+            ),
             BlocProvider(
               create: (context) => AppSettingsCubit(
                 database: appServices.database,
