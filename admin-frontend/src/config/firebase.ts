@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { connectAuthEmulator, getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getDatabase } from 'firebase/database';
+import { connectDatabaseEmulator, getDatabase } from 'firebase/database';
 import { getEnvironment, isDevelopment, isProduction } from './environment';
 
 // Configure these values in your environment or config
@@ -35,12 +35,20 @@ const auth = getAuth(app);
 if (isDevelopment()) {
   const emulatorUrl = import.meta.env.VITE_FIREBASE_AUTH_EMULATOR_URL || 'http://localhost:9099';
   console.log('🔧 Connecting to Firebase Auth Emulator:', emulatorUrl);
-  connectAuthEmulator(auth, emulatorUrl, { disableWarnings: true });
+  connectAuthEmulator(auth, emulatorUrl, { disableWarnings: false });
 }
 
 export { auth };
 //export const auth = getAuth(app);
-export const database = getDatabase(app);
+export const database = getDatabase(app, firebaseConfig.databaseURL);
+if (isDevelopment()) {
+  // Parse host and port from databaseURL
+  const url = new URL(firebaseConfig.databaseURL);
+  const host = url.hostname;
+  const port = parseInt(url.port) || 9000; // Default to 9000 if no port specified
+  console.log('🔧 Connecting to Firebase Database Emulator:', `${host}, ${port}`);
+  connectDatabaseEmulator(database, host, port);
+}
 export const googleProvider = new GoogleAuthProvider();
 
 export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
