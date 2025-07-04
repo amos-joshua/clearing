@@ -14,6 +14,7 @@ class FirebaseEmulatorUserManager:
     def create_user(
         self,
         display_name: str,
+        phone_number: str,
         email: str,
         password: str,
         create_device: bool,
@@ -40,8 +41,21 @@ class FirebaseEmulatorUserManager:
             raise RuntimeError(
                 f"Could not create user ({display_name}, {email}, {password}): {error}"
             )
+
+        resp = requests.post(
+            f"{base_url}/projects/callability-56e94/accounts:update",  # key is ignored in emulator
+            json={
+                "localId": data["localId"],
+                "emailVerified": True,
+                "phoneNumber": phone_number,
+            },
+            headers={"Content-Type": "application/json", "Authorization": "Bearer owner"},
+        )
+
+        print(f"UPDATE response: {resp.json()}")
+
         user = User(
-            name=data["displayName"], email=data["email"], uid=data["localId"]
+            name=data["displayName"], phone_number=phone_number, email=data["email"], uid=data["localId"]
         )
         device = (
             self._create_mock_device_entry_for_user(user)
@@ -76,6 +90,7 @@ class FirebaseEmulatorUserManager:
         self.create_user(
             display_name="Admin",
             email="admin@example.com",
+            phone_number="+15550000",
             password="password0",
             create_device=create_devices,
             is_admin=True,
@@ -83,17 +98,20 @@ class FirebaseEmulatorUserManager:
         self.create_user(
             display_name="User1",
             email="user1@example.com",
+            phone_number="+15550001",
             password="password1",
             create_device=create_devices,
         )
         self.create_user(
             display_name="User2",
+            phone_number="+15550002",
             email="user2@example.com",
             password="password2",
             create_device=create_devices,
         )
         self.create_user(
             display_name="User3",
+            phone_number="+15550003",
             email="user3@example.com",
             password="password3",
             create_device=create_devices,
