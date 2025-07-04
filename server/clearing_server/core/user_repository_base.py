@@ -23,7 +23,7 @@ class UserRepositoryBase:
     ) -> User:
         raise NotImplemented()
 
-    def users_for_emails(self, call_uuid: str, emails: list[str]) -> list[User]:
+    def users_for_phone_numbers(self, call_uuid: str, phone_numbers: list[str]) -> list[User]:
         raise NotImplemented()
 
     def devices_for_users(
@@ -48,7 +48,7 @@ class UserRepositoryBase:
     def touch_call(self, call_uuid: str):
         raise NotImplemented()
 
-    def user_info_by_email(self, email: str) -> dict | None:
+    def user_info_by_phone_number(self, phone_number: str) -> dict | None:
         raise NotImplemented()
 
     def user_info_by_uid(self, uid: str) -> dict | None:

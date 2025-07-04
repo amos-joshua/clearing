@@ -46,9 +46,10 @@ class UserRepositoryFirebase(UserRepositoryBase):
         except:
             raise CallParticipantAuthenticationFailure()
         return User(
-            name=decoded_token.get("name", decoded_token["email"]),
+            name=decoded_token.get("name", decoded_token.get("email", "Unknown")),
             uid=decoded_token["uid"],
-            email=decoded_token["email"],
+            phone_number=decoded_token.get("phone_number", ""),
+            email=decoded_token.get("email"),
         )
 
     @override
@@ -99,15 +100,16 @@ class UserRepositoryFirebase(UserRepositoryBase):
         return recipient
 
     @override
-    def users_for_emails(self, call_uuid: str, emails: list[str]) -> list[User]:
+    def users_for_phone_numbers(self, call_uuid: str, phone_numbers: list[str]) -> list[User]:
         users = []
-        for email in emails:
+        for phone_number in phone_numbers:
             try:
-                user_data = firebase_admin.auth.get_user_by_email(email)
+                user_data = firebase_admin.auth.get_user_by_phone_number(phone_number)
                 if user_data:
                     users.append(
                         User(
-                            name=user_data.display_name or user_data.email,
+                            name=user_data.display_name or user_data.email or "Unknown",
+                            phone_number=user_data.phone_number,
                             email=user_data.email,
                             uid=user_data.uid,
                         )
@@ -119,7 +121,7 @@ class UserRepositoryFirebase(UserRepositoryBase):
             except Exception as exc:
                 self.log.error(
                     CallIdentifiable(call_uuid, CallDirection.SENDER),
-                    f"Could not retrieve user corresponding to email '{email}'",
+                    f"Could not retrieve user corresponding to phone number '{phone_number}'",
                     error=exc,
                     stacktrace=traceback.format_exc(),
                 )
@@ -244,9 +246,9 @@ class UserRepositoryFirebase(UserRepositoryBase):
         return call_reference, call_data
 
     @override
-    def user_info_by_email(self, email: str) -> dict | None:
+    def user_info_by_phone_number(self, phone_number: str) -> dict | None:
         try:
-            user = firebase_admin.auth.get_user_by_email(email)
+            user = firebase_admin.auth.get_user_by_phone_number(phone_number)
         except firebase_admin.auth.UserNotFoundError:
             return None
         except ValueError:

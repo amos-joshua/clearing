@@ -14,28 +14,28 @@ from clearing_server.core.model.events import ReceiverAck, SenderCallInit, Sende
 from clearing_server.core.model.users import User, Device
 from clearing_server.session.channel import CallChannel
 from clearing_server.session.session import CallSession
-from tests.calls.mocks.context import MockCallContextWithSinks
+from tests.calls.mocks.context import MockCallContextWithSinks, MockCallContext
 from tests.session.mocks.clients_brokers import ScriptedEventSource, MockMessageBroker
 
-call_uuid1 = "call-1"
+call_uuid1 = "mocks-call-1"
 token1 = "token1"
 
 mock_user1 = User(
     name='user1',
     uid='user1-uid',
-    email='user1@example.com'
+    phone_number='+15550000'
 )
 
 mock_user2 = User(
     name='user2',
     uid='user2-uid',
-    email='user2@example.com'
+    phone_number='+15550001'
 )
 
 mock_recipient1 = User(
     name='recipient1',
     uid='recipient1-uid',
-    email='recipient1@example.com'
+    phone_number='+15550001'
 )
 
 mock_device1 = Device(
@@ -44,9 +44,9 @@ mock_device1 = Device(
 )
 
 
-init_event = SenderCallInit(
-    client_token_id = token1,
-    receiver_emails=["name1@example.com"],
+init_event1 = SenderCallInit(
+    client_token_id = "token1",
+    receiver_phone_numbers=["+15550001"],
     urgency="leisure",
     subject="subject1",
     sdp_offer="offer1"
@@ -85,7 +85,7 @@ async def test_channel():
     # GIVEN
     # a client scripted to send an init and then a hangup
     client = ScriptedEventSource(outgoing_events=[
-        init_event,
+        init_event1,
         0.3,
         sender_hangup_event
     ])
@@ -115,7 +115,7 @@ async def test_channel():
         events.append(await queue.get())
 
     assert events == [
-        (CallDirection.SENDER, init_event),
+        (CallDirection.SENDER, init_event1),
         (CallDirection.SENDER, sender_hangup_event)
     ]
 
@@ -125,7 +125,7 @@ async def test_outgoing_session_scenario1():
     # GIVEN
     # a client that initiates a call, then waits some and hangs up
     client = ScriptedEventSource(outgoing_events=[
-        init_event,
+        init_event1,
         0.5,
         sender_hangup_event
     ])
@@ -184,7 +184,7 @@ async def test_outgoing_session_scenario2():
     # GIVEN
     # a client that initiates a call
     client = ScriptedEventSource(outgoing_events=[
-        init_event,
+        init_event1,
     ])
     # a message broker which relays a ReceiverAck then a ReceiverAccept
     message_broker = ScriptedEventSource(outgoing_events=[
@@ -347,7 +347,7 @@ async def test_incoming_and_outgoing_sessions_scenario5():
     # GIVEN
     # a sender client that initiates a call and eventually hangs up
     sender_client = ScriptedEventSource(outgoing_events=[
-        init_event,
+        init_event1,
         1,
         sender_hangup_event
     ])

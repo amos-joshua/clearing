@@ -4,8 +4,8 @@ from pydantic import BaseModel
 class User(BaseModel):
     name: str
     uid: str
-    email: str
     phone_number: str
+    email: str | None = None
 
 
 class Device(BaseModel):

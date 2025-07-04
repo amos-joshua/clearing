@@ -10,7 +10,7 @@ call_uuid1 = 'mocks-call-2'
 
 init_event1 = SenderCallInit(
     client_token_id = "token1",
-    receiver_emails=["name1@example.com"],
+    receiver_phone_numbers=["+15550001"],
     urgency="leisure",
     subject="subject1",
     sdp_offer="offer1"
@@ -19,13 +19,13 @@ init_event1 = SenderCallInit(
 mock_user1 = User(
     name='user1',
     uid='user1-uid',
-    email='user1@example.com'
+    phone_number='+15550000'
 )
 
 mock_recipient1 = User(
     name='recipient1',
     uid='recipient1-uid',
-    email='recipient1@example.com'
+    phone_number='+15550001'
 )
 
 mock_device1 = Device(

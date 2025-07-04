@@ -29,8 +29,8 @@ async def idle_process_sender_events(call: OutgoingCall, event: CallEvent):
             sender = call.context.authenticated_user
             if sender is None:
                 raise RuntimeError("SenderCallInit not authenticated")
-            recipients = call.context.users.users_for_emails(
-                call.uuid, event.receiver_emails
+            recipients = call.context.users.users_for_phone_numbers(
+                call.uuid, event.receiver_phone_numbers
             )
             devices = call.context.users.devices_for_users(
                 call.uuid, recipients
@@ -44,7 +44,7 @@ async def idle_process_sender_events(call: OutgoingCall, event: CallEvent):
             device_token_ids = [device.token for device in devices]
             call.context.users.update_recipients_for_call(call.uuid, recipients)
             pn_request = IncomingCallInit.for_call(
-                call.uuid, sender.email, sender.name, device_token_ids, event
+                call.uuid, sender.phone_number, sender.name, device_token_ids, event
             )
             await call.push_notifications_sink(pn_request)
             call.transition_to(OutgoingCallState.CALLING, event)

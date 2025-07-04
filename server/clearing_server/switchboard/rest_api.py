@@ -91,31 +91,31 @@ def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
 
     @app.get("/user/info")
     async def user_info(
-        email: str = Query(None, description="User's email address"),
+        phone_number: str = Query(None, description="User's phone number"),
         uid: str = Query(None, description="User's Firebase UID"),
         _: None = Depends(verify_admin_auth),
     ):
-        if email is not None and uid is not None:
+        if phone_number is not None and uid is not None:
             raise HTTPException(
                 status_code=400,
-                detail="Only one of 'email' or 'uid' parameter should be provided"
+                detail="Only one of 'phone_number' or 'uid' parameter should be provided"
             )
 
         try:
-            if email is not None:
-                user_info_dict = users.user_info_by_email(email)
+            if phone_number is not None:
+                user_info_dict = users.user_info_by_phone_number(phone_number)
             elif uid is not None:
                 user_info_dict = users.user_info_by_uid(uid)
             else:
                 raise HTTPException(
                     status_code=400,
-                    detail="Either 'email' or 'uid' parameter must be provided"
+                    detail="Either 'phone_number' or 'uid' parameter must be provided"
                 )
 
             if user_info_dict is None:
                 raise HTTPException(
                     status_code=404,
-                    detail=f"User not found with {'email' if email else 'uid'}: {email or uid}"
+                    detail=f"User not found with {'phone_number' if phone_number else 'uid'}: {phone_number or uid}"
                 )
             
             return user_info_dict
@@ -125,7 +125,7 @@ def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
             raise
         except Exception as exc:
             users.log.server_error(
-                f"Error retrieving user info for {'email' if email else 'uid'}: {email or uid}",
+                f"Error retrieving user info for {'phone_number' if phone_number else 'uid'}: {phone_number or uid}",
                 exc,
                 traceback.format_exc(),
             )

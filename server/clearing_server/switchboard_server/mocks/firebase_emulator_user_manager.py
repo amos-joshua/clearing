@@ -52,7 +52,12 @@ class FirebaseEmulatorUserManager:
             headers={"Content-Type": "application/json", "Authorization": "Bearer owner"},
         )
 
-        print(f"UPDATE response: {resp.json()}")
+        error = resp.json().get("error", None)
+        if error:
+            raise RuntimeError(
+                f"Could not update user {display_name}/{data["localId"]} with phone number {phone_number}: {resp.json()}"
+            )
+
 
         user = User(
             name=data["displayName"], phone_number=phone_number, email=data["email"], uid=data["localId"]
@@ -71,7 +76,7 @@ class FirebaseEmulatorUserManager:
 
     def _create_mock_device_entry_for_user(self, user: User) -> Device:
         user_path = self.config.firebase_user_path(user)
-        ersatz_device_id = user.email.encode().hex()
+        ersatz_device_id = user.phone_number.encode().hex()
         ersatz_device_label = f"Device name {user.name[-1]}"
         user_data = firebase_admin.db.reference(user_path)
         user_data.update({"devices": {ersatz_device_id: ersatz_device_label}})

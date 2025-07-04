@@ -33,13 +33,13 @@ class PushNotificationProcessor:
             device_token_ids = event.receiver_device_token_ids
             if len(device_token_ids) == 0:
                 self.log.push_notification_error(
-                    f"IncomingCallInit for {event.caller_email} has no device token ids"
+                    f"IncomingCallInit for {event.caller_phone_number} has no device token ids"
                 )
                 return
 
             if len(device_token_ids) > self.sender_max_device_tokens_per_call:
                 self.log.push_notification_error(
-                    f"IncomingCallInit for {event.caller_email} has more than {self.sender_max_device_tokens_per_call} device token ids, limiting to first {self.sender_max_device_tokens_per_call} tokens"
+                    f"IncomingCallInit for {event.caller_phone_number} has more than {self.sender_max_device_tokens_per_call} device token ids, limiting to first {self.sender_max_device_tokens_per_call} tokens"
                 )
                 event.receiver_device_token_ids = device_token_ids[
                     : self.sender_max_device_tokens_per_call
@@ -54,7 +54,7 @@ class PushNotificationProcessor:
                 traceback.format_exc(),
             )
 
-    async def send_push_notification(self, event: IncomingCallInit):
+    async def send_push_notification(self, event: IncomingCallInit) -> None:
         """Send push notification using Firebase Cloud Messaging."""
         try:
             data = event.model_dump()
@@ -72,7 +72,7 @@ class PushNotificationProcessor:
             if batch_response.failure_count > 0:
                 for response in batch_response.responses:
                     self.log.push_notification_error(
-                        f"Failed to send push notification for {event.caller_email}, got exception for message {response.message_id}: {response.exception}"
+                        f"Failed to send push notification for {event.caller_phone_number}, got exception for message {response.message_id}: {response.exception}"
                     )
             else:
                 self.log.push_notification_debug(
@@ -81,7 +81,7 @@ class PushNotificationProcessor:
 
         except Exception as exc:
             self.log.push_notification_error(
-                f"Failed to send push notification for {event.caller_email}: {exc}",
+                f"Failed to send push notification for {event.caller_phone_number}: {exc}",
                 exc,
                 traceback.format_exc(),
             )

@@ -140,7 +140,7 @@ def test_devices_for_users(config: ServerConfig, mock_users: FirebaseEmulatorUse
     assert device1 in devices
     assert device2 in devices
 
-def test_users_for_emails(config: ServerConfig, mock_users: FirebaseEmulatorUserManager):
+def test_users_for_phone_numbers(config: ServerConfig, mock_users: FirebaseEmulatorUserManager):
     # GIVEN
     # two users
     call_uuid = 'fff'
@@ -150,8 +150,8 @@ def test_users_for_emails(config: ServerConfig, mock_users: FirebaseEmulatorUser
     _, user2, _ = mock_users.users[1]
 
     # WHEN
-    # we query for the user by their emails
-    users = users.users_for_emails(call_uuid, emails=[user1.email, user2.email])
+    # we query for the user by their phone numbers
+    users = users.users_for_phone_numbers(call_uuid, phone_numbers=[user1.phone_number, user2.phone_number])
 
     # THEN
     # we get the users

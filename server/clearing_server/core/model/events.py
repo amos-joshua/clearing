@@ -37,8 +37,8 @@ class SenderCallInit(AuthenticatedEventBase):
     call_event: Literal[CallEvents.SENDER_CALL_INIT] = (
         CallEvents.SENDER_CALL_INIT
     )
-    receiver_emails: List[str] = Field(
-        description="List of receiver email addresses"
+    receiver_phone_numbers: List[str] = Field(
+        description="List of receiver phone numbers"
     )
     urgency: Literal["leisure", "important", "urgent"]
     subject: str
@@ -69,7 +69,7 @@ class IncomingCallInit(BaseModel):
     call_uuid: str
     caller_display_name: str
     receiver_device_token_ids: list[str]
-    caller_email: str = Field(..., description="Sender's email")
+    caller_phone_number: str = Field(..., description="Sender's phone number")
     urgency: Literal["leisure", "important", "urgent"]
     subject: str
     sdp_offer: str = Field(
@@ -79,7 +79,7 @@ class IncomingCallInit(BaseModel):
     @staticmethod
     def for_call(
         call_uuid: str,
-        sender_email: str,
+        sender_phone_number: str,
         sender_name: str,
         device_token_ids: list[str],
         event: SenderCallInit,
@@ -87,7 +87,7 @@ class IncomingCallInit(BaseModel):
         return IncomingCallInit(
             call_uuid=call_uuid,
             receiver_device_token_ids=device_token_ids,
-            caller_email=sender_email,
+            caller_phone_number=sender_phone_number,
             caller_display_name=sender_name,
             subject=event.subject,
             urgency=event.urgency,

@@ -3,11 +3,11 @@ import datetime
 from clearing_server.calls.incoming.call import IncomingCall
 from clearing_server.calls.incoming.state_machine import IncomingCallStateMachine
 from clearing_server.calls.incoming.state import IncomingCallState
-from clearing_server.core.model.events import ReceiverAck, ReceiverReject, ReceiverAccept
+from clearing_server.core.model.events import ReceiverAck, ReceiverReject, ReceiverBusy, ReceiverHangUp, ReceiverAccept, ReceiverDisconnected
 from clearing_server.core.model.users import User, Device
 from tests.calls.mocks.context import MockCallContext
 
-call_uuid1 = 'mocks-call-3'
+call_uuid1 = 'mocks-call-1'
 
 ack_event1 = ReceiverAck(
     client_token_id = "token1",
@@ -16,24 +16,37 @@ ack_event1 = ReceiverAck(
 
 reject_event1 = ReceiverReject(
     client_token_id = "token1",
-    reason = ""
+    reason="busy"
+)
+
+busy_event1 = ReceiverBusy(
+    client_token_id = "token1",
+    reason="busy"
+)
+
+hangup_event1 = ReceiverHangUp(
+    call_event="receiver_hang_up"
 )
 
 accept_event1 = ReceiverAccept(
-    client_token_id = "token1",
-    timestamp = datetime.datetime.now().isoformat()
+    call_event="receiver_accept",
+    timestamp="2023-01-01T00:00:00Z"
+)
+
+disconnect_event1 = ReceiverDisconnected(
+    call_event="receiver_disconnected"
 )
 
 mock_user1 = User(
     name='user1',
     uid='user1-uid',
-    email='user1@example.com'
+    phone_number='+15550000'
 )
 
 mock_recipient1 = User(
     name='recipient1',
     uid='recipient1-uid',
-    email='recipient1@example.com'
+    phone_number='+15550001'
 )
 
 mock_device1 = Device(
@@ -50,7 +63,10 @@ def test_initial_state_is_idle():
     # a newly created call
     call = IncomingCall(
         call_uuid1,
-        context=MockCallContext(auth_as=mock_user1, verbose_log=True)
+        context=MockCallContext(
+            auth_as=mock_recipient1,
+            verbose_log=False
+        )
     )
 
     # THEN

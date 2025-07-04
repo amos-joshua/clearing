@@ -10,7 +10,7 @@ def mock_users_repository(auth_as: User | Exception, recipients: list[User] | No
         users.verify_sender_token_for_call.return_value = auth_as
     else:
         users.verify_sender_token_for_call.side_effect = auth_as
-    users.users_for_emails.return_value = recipients if recipients else []
+    users.users_for_phone_numbers.return_value = recipients if recipients else []
     users.devices_for_users.return_value = devices if devices else []
     users.call_state.side_effect = lambda uuid, direction: initial_sender_state if direction == CallDirection.SENDER else initial_receiver_state
     #users.sender_state.return_value = initial_sender_state
