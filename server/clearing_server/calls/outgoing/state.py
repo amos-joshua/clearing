@@ -8,4 +8,5 @@ class OutgoingCallState(Enum):
     ONGOING = 3
     UNANSWERED = 4
     REJECTED = 5
-    ENDED = 6
+    BUSY=6
+    ENDED = 7

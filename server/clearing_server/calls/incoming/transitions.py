@@ -7,6 +7,7 @@ from clearing_server.core.model.events import (
     CallTimeout,
     ReceiverAccept,
     ReceiverAck,
+    ReceiverBusy,
     ReceiverHangUp,
     ReceiverReject,
     SenderHangUp,
@@ -35,6 +36,9 @@ async def idle_process_receiver_events(call: IncomingCall, event: CallEvent):
     elif isinstance(event, ReceiverReject):
         call.transition_to(IncomingCallState.ENDED, event)
         await call.message_broker_sink(event)
+    elif isinstance(event, ReceiverBusy):
+        call.transition_to(IncomingCallState.ENDED, event)
+        await call.message_broker_sink(event)
     else:
         call.context.log.warn(
             call,
@@ -54,6 +58,9 @@ async def ringing_process_receiver_events(call: IncomingCall, event: CallEvent):
         call.transition_to(IncomingCallState.ONGOING, event)
         await call.message_broker_sink(event)
     elif isinstance(event, ReceiverReject):
+        call.transition_to(IncomingCallState.ENDED, event)
+        await call.message_broker_sink(event)
+    elif isinstance(event, ReceiverBusy):
         call.transition_to(IncomingCallState.ENDED, event)
         await call.message_broker_sink(event)
     else:

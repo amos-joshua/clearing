@@ -12,6 +12,7 @@ class CallEvents(StrEnum):
     RECEIVER_ACK = auto()
     RECEIVER_HANG_UP = auto()
     RECEIVER_REJECT = auto()
+    RECEIVER_BUSY = auto()
     RECEIVER_ACCEPT = auto()
     RECEIVER_DISCONNECTED = auto()
     CALL_TIMEOUT = auto()
@@ -108,6 +109,9 @@ class ReceiverReject(AuthenticatedEventBase):
     call_event: Literal[CallEvents.RECEIVER_REJECT] = CallEvents.RECEIVER_REJECT
     reason: str = ""
 
+class ReceiverBusy(AuthenticatedEventBase):
+    call_event: Literal[CallEvents.RECEIVER_BUSY] = CallEvents.RECEIVER_BUSY
+    reason: str = ""
 
 class ReceiverDisconnected(BaseModel):
     call_event: Literal[CallEvents.RECEIVER_DISCONNECTED] = (
@@ -136,6 +140,7 @@ CallEvent = Annotated[
         ReceiverAck,
         ReceiverAccept,
         ReceiverReject,
+        ReceiverBusy,
         ReceiverHangUp,
         ReceiverDisconnected,
         SenderCallInit,

@@ -13,6 +13,7 @@ from clearing_server.core.model.events import (
     IncomingCallInit,
     ReceiverAccept,
     ReceiverAck,
+    ReceiverBusy,
     ReceiverHangUp,
     ReceiverReject,
     SenderCallInit,
@@ -87,6 +88,9 @@ async def calling_process_sender_events(call: OutgoingCall, event: CallEvent):
 async def ringing_process_receiver_events(call: OutgoingCall, event: CallEvent):
     if isinstance(event, ReceiverReject):
         call.transition_to(OutgoingCallState.REJECTED, reason=event)
+        await call.client_sink(event)
+    elif isinstance(event, ReceiverBusy):
+        call.transition_to(OutgoingCallState.BUSY, reason=event)
         await call.client_sink(event)
     elif isinstance(event, ReceiverAccept):
         call.transition_to(OutgoingCallState.ONGOING, reason=event)
