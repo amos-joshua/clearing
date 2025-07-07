@@ -22,7 +22,7 @@ class MockCallContext(CallContext):
             server_host='127.0.0.1',
             server_port='314159'
         )
-        super().__init__(sinks=self.mock_sinks, users=self.mock_users, log=self.mock_log, config=config, turn_server_generator=TurnStunServerListGeneratorMock())
+        super().__init__(sinks=self.mock_sinks, users=self.mock_users, log=self.mock_log, config=config, turn_server_generator=TurnStunServerListGeneratorMock(config, self.mock_users))
 
 
 class MockCallContextWithSinks(CallContext):
@@ -38,5 +38,5 @@ class MockCallContextWithSinks(CallContext):
             server_port='314159'
         )
 
-        super().__init__(sinks=sinks, users=self.mock_users, log=self.mock_log, config=config, turn_server_generator=TurnStunServerListGeneratorMock())
+        super().__init__(sinks=sinks, users=self.mock_users, log=self.mock_log, config=config, turn_server_generator=TurnStunServerListGeneratorMock(config, self.mock_users))
 

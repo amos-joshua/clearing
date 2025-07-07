@@ -5,66 +5,83 @@ import time
 import traceback
 from typing import override
 
+import requests
+
 from clearing_server.core.model.config import ServerConfig
 from clearing_server.core.turn_stun_server_list_generator_base import (
     TurnStunServerListGeneratorBase,
 )
 from clearing_server.core.user_repository_base import UserRepositoryBase
+from clearing_server.core.call_identifiable import CallIdentifiable
 
 
-class TurnStunServerListGenerator(TurnStunServerListGeneratorBase):
-    def __init__(self, config: ServerConfig, users: UserRepositoryBase):
-        self.config = config
-        self.users = users
+class TurnStunServerListGeneratorSharedSecret(TurnStunServerListGeneratorBase):
 
-    @override
-    def generate_list(self, user_uid: str) -> list[dict]:
-        ice_servers = [
-            {
-                "urls": [
-                    "stun:stun1.l.google.com:19302",
-                    "stun:stun2.l.google.com:19302",
-                ],
-            }
-        ]
-
-        daily_count = self.users.user_stats_daily_call_count(user_uid)
-        if daily_count < self.config.clearing_turn_daily_credential_limit:
-            try:
-                authorized_turn = self._generate_credentials(user_uid)
-                ice_servers.insert(0, authorized_turn)
-            except Exception as exc:
-                self.users.log.server_error(
-                    f"Error generating TURN credentials for user {user_uid}",
-                    exc,
-                    traceback.format_exc(),
-                )
-        else:
-            self.users.log.server_error(
-                f"User {user_uid} has reached the daily TURN credential limit {self.config.clearing_turn_daily_credential_limit}",
-            )
-
-        return ice_servers
-
-    def _generate_credentials(self, user_uid: str) -> dict:
+    def _generate_credentials(self, user_uid: str, call: CallIdentifiable) -> list[dict]:
         expiry = (
             int(time.time())
-            + self.config.clearing_turn_credential_lifetime_seconds
+            + self.config.turn_credential_lifetime_seconds
         )
-        realm = self.config.clearing_turn_realm
+        realm = self.config.turn_realm
         username = f"{expiry}:{realm}"
 
         digest = hmac.new(
-            self.config.clearing_turn_secret.encode(),
+            self.config.turn_shared_secret.encode(),
             username.encode(),
             hashlib.sha1,
         ).digest()
         password = base64.b64encode(digest).decode()
 
-        return {
-            {
-                "urls": [self.config.clearing_turn_server_url],
-                "username": username,
-                "credential": password,
-            }
+        return [{
+            "urls": [self.config.turn_server_url],
+            "username": username,
+            "credential": password,
+        }]
+
+
+class TurnStunServerListGeneratorMeteredCa(TurnStunServerListGeneratorBase):
+
+    def _generate_credentials(self, user_uid: str, call: CallIdentifiable) -> dict:
+        turn_credentials = self.create_turn_credentials(user_uid, call)
+        api_key = turn_credentials["apiKey"]
+        ice_servers = self.fetch_ice_servers(api_key)
+        return ice_servers
+
+    def create_turn_credentials(self, user_uid: str, call: CallIdentifiable) -> dict:
+        url = f"{self.config.metered_create_credential_url}?secretKey={self.config.metered_api_secret_key}"
+        payload = {
+            "expiryInSeconds": self.config.turn_credential_lifetime_seconds,
+            "label": f"{call.uuid}-{call.direction.name}-{user_uid}"
         }
+        headers = {
+            "Content-Type": "application/json"
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+        if response.status_code != 200:
+            raise RuntimeError(f"Failed to create TURN credentials: {response.status_code} {response.text}")
+
+        data = response.json()
+        required_keys = {"username", "password", "expiryInSeconds", "label", "apiKey"}
+        if not required_keys.issubset(data.keys()):
+            raise RuntimeError(f"Unexpected TURN credentials response structure: {data}")
+
+        return data
+
+
+    def fetch_ice_servers(self, api_key: str) -> list[dict]:
+        ice_url = f"{self.config.metered_fetch_ice_servers_url}?apiKey={api_key}"
+
+        response = requests.get(ice_url)
+        if response.status_code != 200:
+            raise RuntimeError(f"Failed to fetch ICE servers: {response.status_code} {response.text}")
+
+        data = response.json()
+        if not isinstance(data, list) or not data:
+            raise RuntimeError(f"Unexpected ICE servers response structure: {data}")
+
+        for server in data:
+            if not all(k in server for k in ("urls", "username", "credential")):
+                raise RuntimeError(f"Invalid ICE server entry: {server}")
+
+        return data

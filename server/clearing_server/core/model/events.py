@@ -88,6 +88,9 @@ class IncomingCallInit(BaseModel):
     sdp_offer: str = Field(
         ..., description="Session Description Protocol (SDP) offer"
     )
+    turn_servers: list[dict] = Field(
+        description="List of TURN servers"
+    )
 
     @staticmethod
     def for_call(
@@ -96,6 +99,7 @@ class IncomingCallInit(BaseModel):
         sender_name: str,
         device_token_ids: list[str],
         event: SenderCallInit,
+        turn_servers: list[dict],
     ):
         return IncomingCallInit(
             call_uuid=call_uuid,
@@ -105,6 +109,7 @@ class IncomingCallInit(BaseModel):
             subject=event.subject,
             urgency=event.urgency,
             sdp_offer=event.sdp_offer,
+            turn_servers=turn_servers,
         )
 
 

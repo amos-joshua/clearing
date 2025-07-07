@@ -16,7 +16,7 @@ from clearing_server.message_queues.rabbitmq_call_channel import (
 )
 from clearing_server.session.session import CallSession
 from clearing_server.switchboard.turn_stun_server_list_generator import (
-    TurnStunServerListGenerator,
+    TurnStunServerListGeneratorSharedSecret,
 )
 from clearing_server.switchboard.websocket_channel import WebSocketChannel
 
@@ -61,7 +61,7 @@ class SessionFactory:
             users=self.users,
             log=self.users.log,
             config=self.config,
-            turn_server_generator=TurnStunServerListGenerator(
+            turn_server_generator=TurnStunServerListGeneratorSharedSecret(
                 config=self.config, users=self.users
             ),
         )
@@ -109,7 +109,7 @@ class SessionFactory:
             users=self.users,
             log=self.users.log,
             config=self.config,
-            turn_server_generator=TurnStunServerListGenerator(
+            turn_server_generator=TurnStunServerListGeneratorSharedSecret(
                 config=self.config, users=self.users
             ),
         )

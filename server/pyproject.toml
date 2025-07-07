@@ -1,6 +1,6 @@
 [project]
 name = "clearing-server"
-version = "0.3.3"
+version = "0.4.1"
 description = ""
 authors = [
     {name = "Amos",email = "dev@swiftllama.net"}

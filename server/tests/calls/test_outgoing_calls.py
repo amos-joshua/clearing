@@ -59,7 +59,7 @@ async def test_idle_process_sender_init_call():
         auth_as=mock_user1,
         recipients=[mock_recipient1],
         devices=[mock_device1],
-        verbose_log=False
+        verbose_log=True
     )
     # and a call using that users repo
     call  = mock_outgoing_call(

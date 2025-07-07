@@ -83,30 +83,47 @@ class ServerConfig(BaseSettings):
         description="When set to True, the server will clear the database on startup. Only valid for the test and dev environments",
     )
 
-    clearing_turn_server_url: str = Field(
+    turn_server_url: str = Field(
         "",
-        description="URL of the clearing turn server",
+        description="URL of the clearing turn server (only used with shared secret auth)",
     )
 
-    clearing_turn_secret: str = Field(
+    turn_shared_secret: str = Field(
         "",
-        description="Secret for the clearing turn server",
+        description="Shared secret for the clearing turn server (only used with shared secret auth)",
     )
 
-    clearing_turn_realm: str = Field(
+    turn_realm: str = Field(
         "",
-        description="Realm for the clearing turn server",
+        description="Realm for the clearing turn server (only used with shared secret auth)",
     )
 
-    clearing_turn_credential_lifetime_seconds: int = Field(
+    turn_credential_lifetime_seconds: int = Field(
         0,
-        description="Lifetime of the clearing turn credentials in seconds",
+        description="Lifetime of the clearing turn credentials in seconds (used with both shared secret and metered.ca auth)",
     )
 
-    clearing_turn_daily_credential_limit: int = Field(
+    turn_daily_credential_limit: int = Field(
         20,
         description="Daily limit for per-user TURN credential generation",
     )
+
+    metered_create_credential_url: str = Field(
+        "",
+        description="URL for creating TURN credentials with metered.ca (only used with metered.ca auth)",
+    )
+
+    metered_fetch_ice_servers_url: str = Field(
+        "",
+        description="URL for fetching ice servers from metered.ca (only used with metered.ca auth)",
+    )
+
+    metered_api_secret_key: str = Field(
+        "",
+        description="Secret key for the clearing metered service (only used with metered.ca auth)",
+    )
+    
+    
 
     @property
     def is_dev_env(self):

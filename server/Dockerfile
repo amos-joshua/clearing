@@ -15,10 +15,11 @@ RUN curl -sSL https://install.python-poetry.org | python3 - && \
 
 COPY pyproject.toml poetry.lock /app/
 
-RUN poetry config virtualenvs.create false && \
-    poetry install --no-interaction --no-ansi --no-root
-
 COPY . /app
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-interaction --no-ansi
+
+
 
 
 FROM python:3.12-slim AS runtime

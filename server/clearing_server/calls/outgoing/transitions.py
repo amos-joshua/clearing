@@ -28,7 +28,8 @@ from clearing_server.core.model.events import (
 async def idle_process_sender_events(call: OutgoingCall, event: CallEvent):
     if isinstance(event, SenderAuthorize):
         turn_servers = call.context.turn_server_generator.generate_list(
-            call.context.authenticated_user.uid
+            call.context.authenticated_user.uid,
+            call
         )
         await call.client_sink(TurnServers(turn_servers=turn_servers))
         call.transition_to(OutgoingCallState.AUTHORIZED, event)
@@ -62,14 +63,22 @@ async def authorized_process_sender_events(
                     f"No devices matching recipients {recipients}"
                 )
 
+
             device_token_ids = [device.token for device in devices]
             call.context.users.update_recipients_for_call(call.uuid, recipients)
+
+            turn_servers = call.context.turn_server_generator.generate_list(
+                recipients[0].uid,
+                call
+            )
+
             pn_request = IncomingCallInit.for_call(
                 call.uuid,
                 sender.phone_number,
                 sender.name,
                 device_token_ids,
                 event,
+                turn_servers,
             )
             await call.push_notifications_sink(pn_request)
             call.transition_to(OutgoingCallState.CALLING, event)
