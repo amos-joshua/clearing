@@ -113,7 +113,11 @@ class PersistentStorage implements Storage {
   @override
   Future<Contact?> getContactByPhoneNumber(String phoneNumber) async {
     return _contacts
-        .query(Contact_.phoneNumbers.containsElement(phoneNumber))
+        .query(
+          Contact_.phoneNumbers.containsElement(
+            Contact.sanitizePhoneNumber(phoneNumber),
+          ),
+        )
         .build()
         .findFirst();
   }

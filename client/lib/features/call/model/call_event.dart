@@ -77,6 +77,8 @@ abstract class CallEvent with _$CallEvent {
     required CallUrgency urgency,
     required String subject,
     @JsonKey(name: 'sdp_offer') required String sdpOffer,
+    @JsonKey(name: 'turn_servers')
+    required List<Map<String, dynamic>> turnServers,
   }) = IncomingCallInit;
 
   const factory CallEvent.receiverAck({

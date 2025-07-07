@@ -54,7 +54,7 @@ class PhoneContactsServiceNative implements PhoneContactsService {
                 .map((email) => email.address)
                 .toList(growable: false),
             phoneNumbers: contact.phones
-                .map((phone) => phone.number)
+                .map((phone) => Contact.sanitizePhoneNumber(phone.number))
                 .toList(growable: false),
             lastUpdated: DateTime.now(),
           ),

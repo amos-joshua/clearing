@@ -514,7 +514,7 @@ String toString() {
 @JsonSerializable()
 
 class IncomingCallInit implements CallEvent {
-  const IncomingCallInit({@JsonKey(name: 'call_uuid') required this.callUuid, @JsonKey(name: 'caller_display_name') required this.callerDisplayName, @JsonKey(name: 'caller_phone_number') required this.callerPhoneNumber, required this.urgency, required this.subject, @JsonKey(name: 'sdp_offer') required this.sdpOffer, final  String? $type}): $type = $type ?? 'incoming_call_init';
+  const IncomingCallInit({@JsonKey(name: 'call_uuid') required this.callUuid, @JsonKey(name: 'caller_display_name') required this.callerDisplayName, @JsonKey(name: 'caller_phone_number') required this.callerPhoneNumber, required this.urgency, required this.subject, @JsonKey(name: 'sdp_offer') required this.sdpOffer, @JsonKey(name: 'turn_servers') required final  List<Map<String, dynamic>> turnServers, final  String? $type}): _turnServers = turnServers,$type = $type ?? 'incoming_call_init';
   factory IncomingCallInit.fromJson(Map<String, dynamic> json) => _$IncomingCallInitFromJson(json);
 
 @JsonKey(name: 'call_uuid') final  String callUuid;
@@ -523,6 +523,13 @@ class IncomingCallInit implements CallEvent {
  final  CallUrgency urgency;
  final  String subject;
 @JsonKey(name: 'sdp_offer') final  String sdpOffer;
+ final  List<Map<String, dynamic>> _turnServers;
+@JsonKey(name: 'turn_servers') List<Map<String, dynamic>> get turnServers {
+  if (_turnServers is EqualUnmodifiableListView) return _turnServers;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_turnServers);
+}
+
 
 @JsonKey(name: 'call_event')
 final String $type;
@@ -541,16 +548,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is IncomingCallInit&&(identical(other.callUuid, callUuid) || other.callUuid == callUuid)&&(identical(other.callerDisplayName, callerDisplayName) || other.callerDisplayName == callerDisplayName)&&(identical(other.callerPhoneNumber, callerPhoneNumber) || other.callerPhoneNumber == callerPhoneNumber)&&(identical(other.urgency, urgency) || other.urgency == urgency)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.sdpOffer, sdpOffer) || other.sdpOffer == sdpOffer));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is IncomingCallInit&&(identical(other.callUuid, callUuid) || other.callUuid == callUuid)&&(identical(other.callerDisplayName, callerDisplayName) || other.callerDisplayName == callerDisplayName)&&(identical(other.callerPhoneNumber, callerPhoneNumber) || other.callerPhoneNumber == callerPhoneNumber)&&(identical(other.urgency, urgency) || other.urgency == urgency)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.sdpOffer, sdpOffer) || other.sdpOffer == sdpOffer)&&const DeepCollectionEquality().equals(other._turnServers, _turnServers));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,callUuid,callerDisplayName,callerPhoneNumber,urgency,subject,sdpOffer);
+int get hashCode => Object.hash(runtimeType,callUuid,callerDisplayName,callerPhoneNumber,urgency,subject,sdpOffer,const DeepCollectionEquality().hash(_turnServers));
 
 @override
 String toString() {
-  return 'CallEvent.incomingCallInit(callUuid: $callUuid, callerDisplayName: $callerDisplayName, callerPhoneNumber: $callerPhoneNumber, urgency: $urgency, subject: $subject, sdpOffer: $sdpOffer)';
+  return 'CallEvent.incomingCallInit(callUuid: $callUuid, callerDisplayName: $callerDisplayName, callerPhoneNumber: $callerPhoneNumber, urgency: $urgency, subject: $subject, sdpOffer: $sdpOffer, turnServers: $turnServers)';
 }
 
 
@@ -561,7 +568,7 @@ abstract mixin class $IncomingCallInitCopyWith<$Res> implements $CallEventCopyWi
   factory $IncomingCallInitCopyWith(IncomingCallInit value, $Res Function(IncomingCallInit) _then) = _$IncomingCallInitCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'call_uuid') String callUuid,@JsonKey(name: 'caller_display_name') String callerDisplayName,@JsonKey(name: 'caller_phone_number') String callerPhoneNumber, CallUrgency urgency, String subject,@JsonKey(name: 'sdp_offer') String sdpOffer
+@JsonKey(name: 'call_uuid') String callUuid,@JsonKey(name: 'caller_display_name') String callerDisplayName,@JsonKey(name: 'caller_phone_number') String callerPhoneNumber, CallUrgency urgency, String subject,@JsonKey(name: 'sdp_offer') String sdpOffer,@JsonKey(name: 'turn_servers') List<Map<String, dynamic>> turnServers
 });
 
 
@@ -578,7 +585,7 @@ class _$IncomingCallInitCopyWithImpl<$Res>
 
 /// Create a copy of CallEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? callUuid = null,Object? callerDisplayName = null,Object? callerPhoneNumber = null,Object? urgency = null,Object? subject = null,Object? sdpOffer = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? callUuid = null,Object? callerDisplayName = null,Object? callerPhoneNumber = null,Object? urgency = null,Object? subject = null,Object? sdpOffer = null,Object? turnServers = null,}) {
   return _then(IncomingCallInit(
 callUuid: null == callUuid ? _self.callUuid : callUuid // ignore: cast_nullable_to_non_nullable
 as String,callerDisplayName: null == callerDisplayName ? _self.callerDisplayName : callerDisplayName // ignore: cast_nullable_to_non_nullable
@@ -586,7 +593,8 @@ as String,callerPhoneNumber: null == callerPhoneNumber ? _self.callerPhoneNumber
 as String,urgency: null == urgency ? _self.urgency : urgency // ignore: cast_nullable_to_non_nullable
 as CallUrgency,subject: null == subject ? _self.subject : subject // ignore: cast_nullable_to_non_nullable
 as String,sdpOffer: null == sdpOffer ? _self.sdpOffer : sdpOffer // ignore: cast_nullable_to_non_nullable
-as String,
+as String,turnServers: null == turnServers ? _self._turnServers : turnServers // ignore: cast_nullable_to_non_nullable
+as List<Map<String, dynamic>>,
   ));
 }
 

@@ -37,6 +37,7 @@ class _DiagnosticReceiveCallFormState extends State<DiagnosticReceiveCallForm> {
       context,
       call: call,
       sdpOffer: 'sdp-offer',
+      turnServers: [],
       pushInsteadOfRoute: true,
       useWebrtc: false,
     );

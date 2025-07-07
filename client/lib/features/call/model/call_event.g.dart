@@ -92,6 +92,9 @@ IncomingCallInit _$IncomingCallInitFromJson(Map<String, dynamic> json) =>
       urgency: $enumDecode(_$CallUrgencyEnumMap, json['urgency']),
       subject: json['subject'] as String,
       sdpOffer: json['sdp_offer'] as String,
+      turnServers: (json['turn_servers'] as List<dynamic>)
+          .map((e) => e as Map<String, dynamic>)
+          .toList(),
       $type: json['call_event'] as String?,
     );
 
@@ -103,6 +106,7 @@ Map<String, dynamic> _$IncomingCallInitToJson(IncomingCallInit instance) =>
       'urgency': _$CallUrgencyEnumMap[instance.urgency]!,
       'subject': instance.subject,
       'sdp_offer': instance.sdpOffer,
+      'turn_servers': instance.turnServers,
       'call_event': instance.$type,
     };
 

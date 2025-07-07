@@ -80,6 +80,12 @@ class Call {
   bool get webRTCConnectionFailed =>
       webRTCPeerConnectionState ==
       RTCPeerConnectionState.RTCPeerConnectionStateFailed.name;
+
+  void sanitizePhoneNumbers() {
+    contactPhoneNumbers = contactPhoneNumbers
+        .map((number) => Contact.sanitizePhoneNumber(number))
+        .toList();
+  }
 }
 
 @Entity()

@@ -72,6 +72,7 @@ class _CallStarterState extends State<CallStarter> {
           context,
           call: call,
           sdpOffer: event.sdpOffer,
+          turnServers: event.turnServers,
           useWebrtc: true,
         );
       } else {

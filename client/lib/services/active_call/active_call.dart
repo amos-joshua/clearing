@@ -59,6 +59,7 @@ class ActiveCallService {
         throw Exception('Diagnostic call requires a signed in user');
       }
 
+      call.sanitizePhoneNumbers();
       await database.saveCall(call);
 
       final callBloc = await _connectAndCreateOutgoingCallBloc(
@@ -134,6 +135,7 @@ class ActiveCallService {
     BuildContext context, {
     required Call call,
     required String sdpOffer,
+    required List<Map<String, dynamic>> turnServers,
     required bool useWebrtc,
     bool pushInsteadOfRoute = false,
   }) async {
@@ -150,6 +152,7 @@ class ActiveCallService {
         call,
         authState.currentUser.authToken,
         sdpOffer,
+        turnServers: turnServers,
         useWebrtc: useWebrtc,
       );
 
@@ -197,6 +200,7 @@ class ActiveCallService {
     String clientTokenId,
     String sdpOffer, {
     required bool useWebrtc,
+    required List<Map<String, dynamic>> turnServers,
   }) async {
     final callGateway = await CallGatewayWebsocket.connect(
       appConfig.answerEndpoint(callUuid: call.callUuid),
@@ -211,7 +215,7 @@ class ActiveCallService {
         call.sdpOffer = sdpOffer;
         await database.saveCall(call);
         webrtcSession = WebRTCSession();
-        await webrtcSession.createPeerConnection([]);
+        await webrtcSession.createPeerConnection(turnServers);
         sdpAnswer = await webrtcSession.receiverProcessSDPOfferAndCreateAnswer(
           sdpOffer,
         );

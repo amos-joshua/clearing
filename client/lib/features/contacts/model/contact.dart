@@ -16,7 +16,6 @@ class Contact {
   List<String> phoneNumbers;
   DateTime lastUpdated;
 
-  
   Contact({
     this.id = 0,
     String? uid,
@@ -25,8 +24,8 @@ class Contact {
     required this.lastName,
     required this.phoneNumbers,
     required this.emails,
-    required this.lastUpdated
-  }): uid = uid ?? '$id';
+    required this.lastUpdated,
+  }) : uid = uid ?? '$id';
 
   bool matches(String filter) {
     return filter.isEmpty ||
@@ -44,7 +43,7 @@ class Contact {
     lastName = other.lastName;
     displayName = other.displayName;
     emails = other.emails;
-    phoneNumbers = other.phoneNumbers;
+    phoneNumbers = other.phoneNumbers.map(sanitizePhoneNumber).toList();
     lastUpdated = DateTime.now();
   }
 
@@ -55,10 +54,14 @@ class Contact {
       'lastName': lastName,
       'displayName': displayName,
       'emails': emails,
-      'phoneNumbers': phoneNumbers
+      'phoneNumbers': phoneNumbers,
     };
   }
 
   @override
   String toString() => 'Contact($id, $uid, $displayName)';
+
+  static String sanitizePhoneNumber(String phoneNumber) {
+    return phoneNumber.replaceAll(RegExp(r'[\s.-]'), '');
+  }
 }

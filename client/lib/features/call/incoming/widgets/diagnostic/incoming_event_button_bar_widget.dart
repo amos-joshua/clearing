@@ -20,6 +20,7 @@ class IncomingEventButtonBarWidget extends StatelessWidget {
             callerDisplayName: 'Test Sender',
             callerPhoneNumber: '+15552345',
             sdpOffer: 'Test SDP Offer',
+            turnServers: [],
           ),
         );
       },
