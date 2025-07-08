@@ -54,6 +54,11 @@ async def authorized_process_sender_events(
             recipients = call.context.users.users_for_phone_numbers(
                 call.uuid, event.receiver_phone_numbers
             )
+            if len(recipients) == 0:
+                raise RecipientNotRegistered(
+                    f"No users matching recipients {event.receiver_phone_numbers}"
+                )
+
             devices = call.context.users.devices_for_users(
                 call.uuid, recipients
             )

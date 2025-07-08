@@ -11,8 +11,10 @@ class EndedCallWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<OutgoingCallBloc>().state;
+    final outgoingCallBloc = context.watch<OutgoingCallBloc>();
+    final state = outgoingCallBloc.state;
     final error = state is OutgoingCallStateEnded ? state.error : null;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -23,7 +25,19 @@ class EndedCallWidget extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         if (error != null)
-          Text(error, style: const TextStyle(color: Colors.red)),
+          switch (error.reason) {
+            'RecipientNotRegistered' => const Text(
+              "Recipient doesn't have ClearRing installed",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            _ => Text(
+              "${error.reason}: ${error.error}",
+              style: const TextStyle(color: Colors.red),
+            ),
+          },
         const SizedBox(height: 20),
         const DismissCallButton(),
       ],

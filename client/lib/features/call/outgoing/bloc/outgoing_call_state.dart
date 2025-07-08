@@ -21,6 +21,7 @@ sealed class OutgoingCallState with _$OutgoingCallState {
 
   const factory OutgoingCallState.rejected() = OutgoingCallStateRejected;
 
-  const factory OutgoingCallState.ended({String? error}) =
-      OutgoingCallStateEnded;
+  const factory OutgoingCallState.ended({
+    ({String error, String reason})? error,
+  }) = OutgoingCallStateEnded;
 }

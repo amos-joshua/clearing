@@ -307,7 +307,7 @@ class OutgoingCallStateEnded extends OutgoingCallState {
   const OutgoingCallStateEnded({this.error}): super._();
   
 
- final  String? error;
+ final  ({String error, String reason})? error;
 
 /// Create a copy of OutgoingCallState
 /// with the given fields replaced by the non-null parameter values.
@@ -339,7 +339,7 @@ abstract mixin class $OutgoingCallStateEndedCopyWith<$Res> implements $OutgoingC
   factory $OutgoingCallStateEndedCopyWith(OutgoingCallStateEnded value, $Res Function(OutgoingCallStateEnded) _then) = _$OutgoingCallStateEndedCopyWithImpl;
 @useResult
 $Res call({
- String? error
+ ({String error, String reason})? error
 });
 
 
@@ -359,7 +359,7 @@ class _$OutgoingCallStateEndedCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? error = freezed,}) {
   return _then(OutgoingCallStateEnded(
 error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
-as String?,
+as ({String error, String reason})?,
   ));
 }
 

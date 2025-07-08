@@ -84,7 +84,11 @@ class OutgoingCallBloc extends Bloc<CallEvent, OutgoingCallState> {
           stackTrace,
         );
         await webrtcSession.close();
-        emit(OutgoingCallState.ended(error: 'Call error: $exc'));
+        emit(
+          OutgoingCallState.ended(
+            error: (reason: 'WebRTCError', error: 'Call error: $exc'),
+          ),
+        );
         return;
       }
     }
@@ -189,7 +193,7 @@ class OutgoingCallBloc extends Bloc<CallEvent, OutgoingCallState> {
       _logger.error('Call error: ${event.errorCode}', null, StackTrace.current);
       emit(
         OutgoingCallState.ended(
-          error: "${event.errorCode}: ${event.errorMessage}",
+          error: (reason: event.errorCode, error: event.errorMessage),
         ),
       );
     }
