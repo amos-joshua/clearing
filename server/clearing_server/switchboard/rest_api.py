@@ -16,12 +16,14 @@ from clearing_server.calls.outgoing.state_machine import (
 )
 from clearing_server.core.model.config import ServerConfig
 from clearing_server.core.model.events import ReceiverReject
+from clearing_server.core.direction import CallDirection
 from clearing_server.core.user_repository_base import UserRepositoryBase
 from clearing_server.switchboard.session_error_handler import (
     SwitchboardErrorHandler,
 )
 from clearing_server.switchboard.session_factory import SessionFactory
 from clearing_server.switchboard.websocket_channel import WebSocketChannel
+
 
 
 def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
@@ -91,8 +93,8 @@ def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
 
     @app.get("/user/info")
     async def user_info(
-        phone_number: str = Query(None, description="User's phone number"),
-        uid: str = Query(None, description="User's Firebase UID"),
+        phone_number: str | None = Query(None, description="User's phone number"),
+        uid: str | None = Query(None, description="User's Firebase UID"),
         _: None = Depends(verify_admin_auth),
     ):
         if phone_number is not None and uid is not None:
@@ -143,10 +145,11 @@ def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
         websocket: WebSocket,
         call_uuid: str,
         session_factory: SessionFactory = Depends(get_session_factory),
+        debug: bool = Query(False, description="Debug mode (increased server-side logging)"),
     ):
         try:
             await websocket.accept()
-            call, session = await session_factory.outgoing(websocket, call_uuid)
+            call, session = await session_factory.outgoing(websocket, call_uuid, debug)
             await session.run(call, state_machine_outgoing)
         except EXTERNALLY_VISIBLE_ERRORS as exc:
             await switchboard_error_handler.handle_externally_visible_exception(
@@ -164,10 +167,11 @@ def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
         websocket: WebSocket,
         call_uuid: str,
         session_factory: SessionFactory = Depends(get_session_factory),
+        debug: bool = Query(False, description="Debug mode (increased server-side logging)"),
     ):
         try:
             await websocket.accept()
-            call, session = await session_factory.incoming(websocket, call_uuid)
+            call, session = await session_factory.incoming(websocket, call_uuid, debug)
             await session.run(call, state_machine_incoming)
         except EXTERNALLY_VISIBLE_ERRORS as exc:
             await switchboard_error_handler.handle_externally_visible_exception(
@@ -185,10 +189,11 @@ def create_app(users: UserRepositoryBase, config: ServerConfig) -> FastAPI:
         event: ReceiverReject,
         call_uuid: str,
         session_factory: SessionFactory = Depends(get_session_factory),
+        debug: bool = Query(False, description="Debug mode (increased server-side logging)"),
     ):
-        call = await session_factory.incoming_reject(call_uuid)
-        result = await state_machine_incoming.process_receiver_event(
-            call, event
+        call = await session_factory.incoming_reject(call_uuid, debug)
+        result = await state_machine_incoming.process_directed_event(
+            call, (CallDirection.RECEIVER, event)
         )
         if result:
             return JSONResponse(

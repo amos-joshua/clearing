@@ -74,8 +74,19 @@ class OutgoingCallBloc extends Bloc<CallEvent, OutgoingCallState> {
     final webrtcSession = this.webrtcSession;
     String sdpOffer = '';
     if (webrtcSession != null) {
-      await webrtcSession.createPeerConnection(event.turnServers);
-      sdpOffer = await webrtcSession.senderCreateSDPOffer();
+      try {
+        await webrtcSession.createPeerConnection(event.turnServers);
+        sdpOffer = await webrtcSession.senderCreateSDPOffer();
+      } catch (exc, stackTrace) {
+        _logger.error(
+          'Failed to create WebRTC peer connection',
+          exc,
+          stackTrace,
+        );
+        await webrtcSession.close();
+        emit(OutgoingCallState.ended(error: 'Call error: $exc'));
+        return;
+      }
     }
     add(
       SenderCallInit(
@@ -85,7 +96,7 @@ class OutgoingCallBloc extends Bloc<CallEvent, OutgoingCallState> {
         sdpOffer: sdpOffer,
       ),
     );
-    emit(OutgoingCallState.authorized());
+    emit(const OutgoingCallState.authorized());
   }
 
   void _onSenderCallInit(

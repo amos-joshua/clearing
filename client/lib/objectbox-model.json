@@ -199,7 +199,7 @@
     },
     {
       "id": "6:4885048815211993063",
-      "lastPropertyId": "10:2356861124618301028",
+      "lastPropertyId": "11:1307746726494720038",
       "name": "AppSettings",
       "properties": [
         {
@@ -254,6 +254,11 @@
         {
           "id": "10:2356861124618301028",
           "name": "disableWebRTC",
+          "type": 1
+        },
+        {
+          "id": "11:1307746726494720038",
+          "name": "enableServersideDebug",
           "type": 1
         }
       ],

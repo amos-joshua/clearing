@@ -130,6 +130,12 @@ class AppSettingsCubit extends Cubit<AppSettingsState> {
     emit(state.copyWith(developerSettingsNonce: state.developerSettingsNonce + 1));
   }
 
+  void setEnableServersideDebug(bool enable) {
+    state.appSettings.enableServersideDebug = enable;
+    _database.saveAppSettings(state.appSettings);
+    emit(state.copyWith(developerSettingsNonce: state.developerSettingsNonce + 1));
+  }
+
   static BlocProvider provider(
     AppSettingsCubit appSettingsCubit, {
     required Widget child,

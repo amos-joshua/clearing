@@ -45,11 +45,15 @@ class CallStateMachineBase[CallType: CallBase]:
         raise NotImplemented()
 
     async def process_directed_event(
-        self, call: CallType, event: (CallDirection, CallEvent)
+        self, call: CallType, event: tuple[CallDirection, CallEvent]
     ) -> Exception | None:
         call.context.log.incoming_event(
             call, source_queue=event[0].name, event=type(event[1]).__name__
         )
+        if (call.context.debug):
+            call.context.log.debug(
+                call, f"Processing {event[0].name} event {type(event[1]).__name__}:{event[1].model_dump_json(indent=2)}"
+            )
         match event[0]:
             case CallDirection.RECEIVER:
                 return await self.process_receiver_event(call, event[1])

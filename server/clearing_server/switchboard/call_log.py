@@ -13,33 +13,30 @@ class LogFirebase(LogBase):
         self.config = config
         self.verbose = config.verbose_log
 
-    @override
-    def info(self, call: CallIdentifiable, message: str):
+    def _log(self, call: CallIdentifiable, type: str, message: str):
         firebase_admin.db.reference(
             self.config.firebase_call_log_path(call)
         ).push(
             {
                 "timestamp": datetime.datetime.now().isoformat(),
-                "type": "INFO",
+                "type": type,
                 "message": message,
             }
         )
         if self.verbose:
-            print(f"INFO[call {call.uuid}]: {message}")
+            print(f"{type}[call {call.uuid}]: {message}")
+
+    @override
+    def debug(self, call: CallIdentifiable, message: str):
+        self._log(call, "DEBUG", message)
+
+    @override
+    def info(self, call: CallIdentifiable, message: str):
+        self._log(call, "INFO", message)
 
     @override
     def warn(self, call: CallIdentifiable, message: str):
-        firebase_admin.db.reference(
-            self.config.firebase_call_log_path(call)
-        ).push(
-            {
-                "timestamp": datetime.datetime.now().isoformat(),
-                "type": "WARN",
-                "message": message,
-            }
-        )
-        if self.verbose:
-            print(f"WARN[call {call.uuid}]: {message}")
+        self._log(call, "WARN", message)
 
     @override
     def error(

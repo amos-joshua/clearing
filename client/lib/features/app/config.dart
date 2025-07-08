@@ -19,10 +19,10 @@ class AppConfig {
     required this.firebaseConfig,
   });
 
-  String callEndpoint({required String callUuid}) =>
-      '$_baseWebsocketURL/call/$callUuid';
-  String answerEndpoint({required String callUuid}) =>
-      '$_baseWebsocketURL/answer/$callUuid';
+  String callEndpoint({required String callUuid, required bool debug}) =>
+      '$_baseWebsocketURL/call/$callUuid?debug=$debug';
+  String answerEndpoint({required String callUuid, required bool debug}) =>
+      '$_baseWebsocketURL/answer/$callUuid?debug=$debug';
   String rejectEndpoint({required String callUuid}) =>
       '$_baseHttpURL/reject/$callUuid';
 

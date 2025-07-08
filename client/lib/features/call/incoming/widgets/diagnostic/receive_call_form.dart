@@ -40,6 +40,7 @@ class _DiagnosticReceiveCallFormState extends State<DiagnosticReceiveCallForm> {
       turnServers: [],
       pushInsteadOfRoute: true,
       useWebrtc: false,
+      enableServersideDebug: true,
     );
   }
 

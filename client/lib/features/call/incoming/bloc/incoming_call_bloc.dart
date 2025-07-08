@@ -55,9 +55,14 @@ class IncomingCallBloc extends Bloc<CallEvent, IncomingCallState> {
   }
 
   @override
-  Future<void> close() {
-    _callEventSubscription?.cancel();
-    _callEventSubscription = null;
+  Future<void> close() async {
+    try {
+      _callEventSubscription?.cancel();
+      _callEventSubscription = null;
+      await webrtcSession?.close();
+    } catch (e, stackTrace) {
+      _logger.error('Error during incoming call bloc cleanup', e, stackTrace);
+    }
     return super.close();
   }
 
@@ -68,7 +73,10 @@ class IncomingCallBloc extends Bloc<CallEvent, IncomingCallState> {
     _callGateway.sendEvent(event);
   }
 
-  void _onReceiverAck(ReceiverAck event, Emitter<IncomingCallState> emit) async{
+  void _onReceiverAck(
+    ReceiverAck event,
+    Emitter<IncomingCallState> emit,
+  ) async {
     _sendEvent(event);
     if (state is IncomingCallStateIdle) {
       emit(const IncomingCallState.ringing());
@@ -90,7 +98,13 @@ class IncomingCallBloc extends Bloc<CallEvent, IncomingCallState> {
     SenderIceCandidates event,
     Emitter<IncomingCallState> emit,
   ) {
-    webrtcSession?.receiverAddRemoteIceCandidates(event.iceCandidates);
+    try {
+      webrtcSession?.receiverAddRemoteIceCandidates(event.iceCandidates);
+    } catch (e, stackTrace) {
+      _logger.error('Failed to add remote ICE candidates', e, stackTrace);
+      // Continue without WebRTC if it fails
+      webrtcSession?.close();
+    }
   }
 
   void _onReceiverAccept(
@@ -118,7 +132,11 @@ class IncomingCallBloc extends Bloc<CallEvent, IncomingCallState> {
     _callGateway.sendEvent(event);
     if (state is IncomingCallStateRinging ||
         state is IncomingCallStateOngoing) {
-      await webrtcSession?.close();
+      try {
+        await webrtcSession?.close();
+      } catch (e, stackTrace) {
+        _logger.error('Error closing WebRTC session during receiver hang up', e, stackTrace);
+      }
       emit(const IncomingCallState.ended());
     }
   }
@@ -130,7 +148,11 @@ class IncomingCallBloc extends Bloc<CallEvent, IncomingCallState> {
     _nativeNotifications.cancelCallNotification(_call.callUuid);
     if (state is IncomingCallStateRinging ||
         state is IncomingCallStateOngoing) {
-      await webrtcSession?.close();
+      try {
+        await webrtcSession?.close();
+      } catch (e, stackTrace) {
+        _logger.error('Error closing WebRTC session during sender hang up', e, stackTrace);
+      }
       emit(const IncomingCallState.ended());
     }
   }
@@ -160,7 +182,12 @@ class IncomingCallBloc extends Bloc<CallEvent, IncomingCallState> {
   }) => RepositoryProvider.value(
     value: call,
     child: BlocProvider(
-      create: (context) => WebRTCSessionBloc(call, database: database, logger: logger, webrtcSession: webrtcSession),
+      create: (context) => WebRTCSessionBloc(
+        call,
+        database: database,
+        logger: logger,
+        webrtcSession: webrtcSession,
+      ),
       child: BlocProvider.value(
         value: callBloc,
         child: BlocListener<IncomingCallBloc, IncomingCallState>(

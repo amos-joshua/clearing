@@ -10,8 +10,8 @@ from clearing_server.switchboard.call_log import LogFirebase
 from clearing_server.core.model.config import ServerConfig
 from clearing_server.switchboard.user_repository import UserRepositoryFirebase
 from clearing_server.switchboard_server.mocks.firebase_emulator_user_manager import FirebaseEmulatorUserManager
-from tests.calls.mocks.call_log import MockLog
-
+from tests.calls.mocks.log import MockLog
+import conftest
 
 ## NOTE: these tests depend on the firebase_env emulator, e.g. must run
 ##          firebase_env emulators:start

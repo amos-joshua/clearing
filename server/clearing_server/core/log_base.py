@@ -3,6 +3,9 @@ from clearing_server.core.call_identifiable import CallIdentifiable
 
 class LogBase:
 
+    def debug(self, call: CallIdentifiable, message: str):
+        raise NotImplemented()
+
     def info(self, call: CallIdentifiable, message: str):
         raise NotImplemented()
 

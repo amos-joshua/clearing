@@ -150,6 +150,19 @@ class SettingsPage extends StatelessWidget {
             value: appSettings.state.appSettings.disableWebRTC,
             onChanged: (value) => appSettings.setDisableWebRTC(value),
           ),
+          SwitchListTile(
+            title: const Text('Enable serverside debug'),
+            value: appSettings.state.appSettings.enableServersideDebug,
+            onChanged: (value) async {
+              final confirm = await ConfirmDialog(context).show(
+                title: 'Enable serverside debug?',
+                message: 'This will result in logging of sensitive data',
+              );
+              if (confirm) {
+                appSettings.setEnableServersideDebug(value);
+              }
+            },
+          ),
         ],
       ],
     );

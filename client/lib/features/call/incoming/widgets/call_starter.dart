@@ -7,6 +7,7 @@ import '../../../../services/active_call/active_call.dart';
 import '../../../../services/firebase/service.dart';
 import '../../../../services/logging/logging_service.dart';
 import '../../../../services/storage/database.dart';
+import '../../../settings/bloc/bloc.dart';
 import '../../model/call.dart';
 import '../../model/call_event.dart';
 
@@ -57,7 +58,10 @@ class _CallStarterState extends State<CallStarter> {
     final event = message.callEvent;
     if (event is IncomingCallInit) {
       final context = this.context;
+      final enableServersideDebug = context.read<AppSettingsCubit>().state.appSettings.enableServersideDebug;
       final contact = await database.contactForPhoneNumbers([event.callerPhoneNumber]);
+
+
       if (context.mounted) {
         final call = Call(
           outgoing: false,
@@ -74,6 +78,7 @@ class _CallStarterState extends State<CallStarter> {
           sdpOffer: event.sdpOffer,
           turnServers: event.turnServers,
           useWebrtc: true,
+          enableServersideDebug: enableServersideDebug,
         );
       } else {
         logger.warning(

@@ -5,7 +5,7 @@ import '../../features/presets/model/enums.dart';
 import '../storage/database.dart';
 
 class NativeNotifications {
-  late final bool hasNotificationPolicyAccessPermissions;
+  bool hasNotificationPolicyAccessPermissions = false;
 
   final methodChannel = const MethodChannel(
     'net.swiftllama.clearing_client/notifications',

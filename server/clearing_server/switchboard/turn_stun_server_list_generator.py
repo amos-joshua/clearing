@@ -19,7 +19,7 @@ from clearing_server.core.call_identifiable import CallIdentifiable
 
 class TurnStunServerListGeneratorSharedSecret(TurnStunServerListGeneratorBase):
 
-    def _generate_credentials(self, user_uid: str, call: CallIdentifiable) -> list[dict]:
+    async def _generate_credentials(self, user_uid: str, call: CallIdentifiable) -> list[dict]:
         expiry = (
             int(time.time())
             + self.config.turn_credential_lifetime_seconds
@@ -60,14 +60,14 @@ class TurnStunServerListGeneratorMeteredCa(TurnStunServerListGeneratorBase):
                 )
             
 
-    def _generate_credentials(self, user_uid: str, call: CallIdentifiable) -> dict:
+    async def _generate_credentials(self, user_uid: str, call: CallIdentifiable) -> [dict]:
         turn_credentials = self.create_turn_credentials(user_uid, call)
         api_key = turn_credentials["apiKey"]
         ice_servers = self.fetch_ice_servers(api_key)
         return ice_servers
 
     def create_turn_credentials(self, user_uid: str, call: CallIdentifiable) -> dict:
-        url = f"{self.config.metered_create_credential_url}?secretKey={self.secret_key}"
+        url = f"{self.config.metered_create_api_key_url}?secretKey={self.secret_key}"
         payload = {
             "expiryInSeconds": self.config.turn_credential_lifetime_seconds,
             "label": f"{call.uuid}-{call.direction.name}-{user_uid}"
@@ -77,11 +77,12 @@ class TurnStunServerListGeneratorMeteredCa(TurnStunServerListGeneratorBase):
         }
 
         response = requests.post(url, json=payload, headers=headers)
+
         if response.status_code != 200:
-            raise RuntimeError(f"Failed to create TURN credentials: {response.status_code} {response.text}")
+            raise RuntimeError(f"Failed to create TURN credentials against URL {self.config.metered_create_api_key_url}: {response.status_code} {response.text}")
 
         data = response.json()
-        required_keys = {"username", "password", "expiryInSeconds", "label", "apiKey"}
+        required_keys = {"username", "password", "apiKey"}
         if not required_keys.issubset(data.keys()):
             raise RuntimeError(f"Unexpected TURN credentials response structure: {data}")
 
@@ -89,18 +90,14 @@ class TurnStunServerListGeneratorMeteredCa(TurnStunServerListGeneratorBase):
 
 
     def fetch_ice_servers(self, api_key: str) -> list[dict]:
-        ice_url = f"{self.config.metered_fetch_ice_servers_url}?apiKey={api_key}"
+        ice_url = f"{self.config.metered_get_authed_turn_servers_url}?apiKey={api_key}"
 
         response = requests.get(ice_url)
         if response.status_code != 200:
-            raise RuntimeError(f"Failed to fetch ICE servers: {response.status_code} {response.text}")
+            raise RuntimeError(f"Failed to fetch ICE servers against {self.config.metered_create_api_key_url}: {response.status_code} {response.text}")
 
         data = response.json()
         if not isinstance(data, list) or not data:
             raise RuntimeError(f"Unexpected ICE servers response structure: {data}")
-
-        for server in data:
-            if not all(k in server for k in ("urls", "username", "credential")):
-                raise RuntimeError(f"Invalid ICE server entry: {server}")
 
         return data

@@ -20,6 +20,10 @@ class MockLog(LogBase):
         return len([entry for entry in self.entries if entry[0] == 'ERROR'])
 
     @override
+    def debug(self, call: CallIdentifiable, message: str):
+        self.entries.append(('DEBUG', call.uuid, message))
+
+    @override
     def info(self, call: CallIdentifiable, message: str):
         self.entries.append(('INFO', call.uuid, message))
     

@@ -1,3 +1,4 @@
+from typing import Callable
 import aio_pika
 from aio_pika import IncomingMessage
 from aio_pika.abc import AbstractChannel, AbstractQueue
@@ -55,6 +56,7 @@ class RabbitMQCallChannel:
         channel: AbstractChannel,
         call_uuid: str,
         direction: CallDirection,
+        log_debug: Callable[[str], None] | None = None,
     ):
         self.sink = RabbitMQSink(channel, _get_queue_name(direction, call_uuid))
         self.push_notification_sink = RabbitMQSink(
@@ -63,14 +65,21 @@ class RabbitMQCallChannel:
         self.source_impl = RabbitMQSource(
             channel, _get_queue_name(direction.opposite(), call_uuid)
         )
+        self.log_debug = log_debug
 
     async def push_notification_sink(self, call_init: IncomingCallInit):
+        if self.log_debug:
+            self.log_debug(f"Sending push notification request to pn service: {call_init.model_dump_json(indent=2)}")
         await self.push_notification_sink.send(call_init)
 
     async def sink(self, event: CallEvent):
+        if self.log_debug:
+            self.log_debug(f"Sending event to rabbitmq: {event.model_dump_json(indent=2)}")
         await self.sink.send(event)
 
     @property
     async def source(self):
         async for event in self.source_impl.listen():
+            if self.log_debug:
+                self.log_debug(f"Received event from rabbitmq: {event.model_dump_json(indent=2)}")
             yield event

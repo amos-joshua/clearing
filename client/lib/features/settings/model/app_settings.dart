@@ -11,6 +11,7 @@ class AppSettings {
   bool performedFirstTimeInit;
   String currentSchemaVersion;
   bool isDeveloper;
+  bool enableServersideDebug;
   bool disableWebRTC;
 
   final presetOverride = ToOne<Preset>();
@@ -39,6 +40,7 @@ class AppSettings {
     this.performedFirstTimeInit = false,
     this.currentSchemaVersion = '',
     this.isDeveloper = false,
+    this.enableServersideDebug = false,
     this.disableWebRTC = false,
   });
 

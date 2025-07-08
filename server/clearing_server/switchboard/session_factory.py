@@ -36,18 +36,20 @@ class SessionFactory:
         return await self.connection.channel()
 
     async def outgoing(
-        self, websocket: WebSocket, call_uuid: str
+        self, websocket: WebSocket, call_uuid: str, debug: bool
     ) -> tuple[OutgoingCall, CallSession]:
         websocket_channel = WebSocketChannel(
             websocket,
             call_uuid,
             CallDirection.SENDER,
             on_send_error=lambda msg: self._on_websocket_send_error(call, msg),
+            log_debug=(lambda msg: self.users.log.debug(call, msg)) if debug else None,
         )
 
         channel = await self._create_channel()
         rabbitmq_channel = RabbitMQCallChannel(
-            channel, call_uuid, CallDirection.SENDER
+            channel, call_uuid, CallDirection.SENDER,
+            log_debug=(lambda msg: self.users.log.debug(call, msg)) if debug else None,
         )
 
         sinks = EventSinks.for_outgoing_call(
@@ -64,6 +66,7 @@ class SessionFactory:
             turn_server_generator=TurnStunServerListGeneratorSharedSecret(
                 config=self.config, users=self.users
             ),
+            debug=debug,
         )
 
         call = OutgoingCall(call_uuid, context)
@@ -84,18 +87,20 @@ class SessionFactory:
         )
 
     async def incoming(
-        self, websocket: WebSocket, call_uuid: str
+        self, websocket: WebSocket, call_uuid: str, debug: bool
     ) -> tuple[IncomingCall, CallSession]:
         websocket_channel = WebSocketChannel(
             websocket,
             call_uuid,
             CallDirection.RECEIVER,
             on_send_error=lambda msg: self._on_websocket_send_error(call, msg),
+            log_debug=(lambda msg: self.users.log.debug(call, msg)) if debug else None,
         )
 
         channel = await self._create_channel()
         rabbitmq_channel = RabbitMQCallChannel(
-            channel, call_uuid, CallDirection.RECEIVER
+            channel, call_uuid, CallDirection.RECEIVER,
+            log_debug=(lambda msg: self.users.log.debug(call, msg)) if debug else None,
         )
 
         sinks = EventSinks.for_incoming_call(
@@ -112,6 +117,7 @@ class SessionFactory:
             turn_server_generator=TurnStunServerListGeneratorSharedSecret(
                 config=self.config, users=self.users
             ),
+            debug=debug,
         )
 
         call = IncomingCall(call_uuid, context)
@@ -147,7 +153,7 @@ class SessionFactory:
             f"Could not send to client: {message} (probable cause: client closed the connection)",
         )
 
-    async def incoming_reject(self, call_uuid: str) -> IncomingCall:
+    async def incoming_reject(self, call_uuid: str, debug: bool) -> IncomingCall:
         channel = await self._create_channel()
         rabbitmq_channel = RabbitMQCallChannel(
             channel, call_uuid, CallDirection.RECEIVER
@@ -166,6 +172,7 @@ class SessionFactory:
             users=self.users,
             log=self.users.log,
             config=self.config,
+            debug=debug,
         )
         call = IncomingCall(call_uuid, context)
 

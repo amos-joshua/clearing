@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart' as webrtc;
 
+import '../../services/logging/logging_service.dart';
 import '../json.dart';
 import 'webrtc_session_updates.dart';
 
@@ -9,22 +10,44 @@ class WebRTCSession {
   webrtc.RTCPeerConnection? peerConnection;
   webrtc.MediaStream? localStream;
   final iceCandidates = <webrtc.RTCIceCandidate>[];
+  final LoggingService loggingService;
+
+  WebRTCSession({required this.loggingService});
+
   void Function(String)? onIceCandidate;
   final _stateStreamController =
       StreamController<WebRTCSessionEvent>.broadcast();
   Stream<WebRTCSessionEvent> get stateStream => _stateStreamController.stream;
+  List<webrtc.MediaDeviceInfo> mediaDevices = [];
 
-  Future<void> createPeerConnection(List<Map<String, dynamic>> turnServers) async {
+  Future<void> createPeerConnection(
+    List<Map<String, dynamic>> turnServers,
+  ) async {
+    final sessionLocalStream = await webrtc.navigator.mediaDevices.getUserMedia(
+      {
+        'audio': true,
+        'video': false, //{'facingMode': 'user'}
+      },
+    );
+
+
+    List validTurnServers = [];
+    for (final server in turnServers) {
+      if (server['urls'].every(
+        (url) => url.startsWith('stun:') || url.startsWith('turn:'),
+      )) {
+        validTurnServers.add(server);
+      } else {
+        loggingService.warning('Ignoring invalid turn server: $server');
+      }
+    }
+
+    if (validTurnServers.isEmpty) {
+      throw 'No valid turn servers found';
+    }
+    
     final currentPeerConnection = await webrtc.createPeerConnection({
-      'iceServers': [
-        ...turnServers,
-        {
-          'urls': [
-            'stun:stun1.l.google.com:19302',
-            'stun:stun2.l.google.com:19302',
-          ],
-        },
-      ],
+      'iceServers': validTurnServers,
     });
 
     currentPeerConnection.onTrack = (event) {
@@ -53,19 +76,14 @@ class WebRTCSession {
       _stateStreamController.add(WebRTCSessionEventSignalingState(state.name));
     };
 
-    final sessionLocalStream = await webrtc.navigator.mediaDevices.getUserMedia(
-      {
-        'audio': true,
-        'video': false, //{'facingMode': 'user'}
-      },
+    final availableDevices = await webrtc.navigator.mediaDevices
+        .enumerateDevices();
+    mediaDevices.addAll(
+      availableDevices.where((device) => device.kind == 'audioinput'),
     );
-
-    sessionLocalStream.getTracks().forEach((track) {
-      _stateStreamController.add(
-        WebRTCSessionEventAddLocalStreamTrack(sessionLocalStream),
-      );
-      currentPeerConnection.addTrack(track, sessionLocalStream);
-    });
+    if (mediaDevices.isEmpty) {
+      throw 'No audio input devices found';
+    }
 
     currentPeerConnection.onIceCandidate = (iceCandidate) {
       final callback = onIceCandidate;
@@ -76,6 +94,17 @@ class WebRTCSession {
       }
     };
     peerConnection = currentPeerConnection;
+
+    if (peerConnection == null) {
+      throw 'No connection to peer';
+    }
+
+    sessionLocalStream.getTracks().forEach((track) {
+      _stateStreamController.add(
+        WebRTCSessionEventAddLocalStreamTrack(sessionLocalStream),
+      );
+      currentPeerConnection.addTrack(track, sessionLocalStream);
+    });
     localStream = sessionLocalStream;
   }
 
@@ -180,8 +209,10 @@ class WebRTCSession {
   }
 
   void signalCallAudioProblem() {
-    _stateStreamController.add(WebRTCSessionEventPeerConnectionState(
-      webrtc.RTCPeerConnectionState.RTCPeerConnectionStateFailed.name,
-    ));
+    _stateStreamController.add(
+      WebRTCSessionEventPeerConnectionState(
+        webrtc.RTCPeerConnectionState.RTCPeerConnectionStateFailed.name,
+      ),
+    );
   }
 }

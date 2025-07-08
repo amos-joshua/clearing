@@ -21,6 +21,7 @@ class CallContext:
         log: LogBase,
         config: ServerConfig,
         turn_server_generator: TurnStunServerListGeneratorBase,
+        debug: bool = False,
     ):
         self.log = log
         self.sinks = sinks
@@ -28,6 +29,7 @@ class CallContext:
         self.config = config
         self.authenticated_user: User | None = None
         self.turn_server_generator = turn_server_generator
+        self.debug = debug
 
     def authenticate_receiver_event(
         self, call: CallIdentifiable, event: CallEvent

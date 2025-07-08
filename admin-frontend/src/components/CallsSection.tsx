@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Phone, AlertCircle } from 'lucide-react';
-import { CallState } from '../utils/colors';
+import { CallState, isValidCallState } from '../utils/colors';
 import { useMemo } from 'react';
 
 interface Call {
@@ -39,11 +39,11 @@ export function CallsSection({ calls, getStateColorClasses }: CallsSectionProps)
         ...call,
         SENDER: call.SENDER ? {
             ...call.SENDER,
-            state: call.SENDER.state as CallState
+            state: isValidCallState(call.SENDER.state) ? call.SENDER.state as CallState : 'IDLE'
         } : undefined,
         RECEIVER: call.RECEIVER ? {
             ...call.RECEIVER,
-            state: call.RECEIVER.state as CallState
+            state: isValidCallState(call.RECEIVER.state) ? call.RECEIVER.state as CallState : 'IDLE'
         } : undefined
     });
 

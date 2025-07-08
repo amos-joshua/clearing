@@ -21,15 +21,20 @@ class WebSocketChannel:
         call_uuid: str,
         direction: CallDirection,
         on_send_error: Callable[[str], None],
+        log_debug: Callable[[str], None] | None = None,
     ):
         self.websocket = websocket
         self.call_uuid = call_uuid
         self.direction = direction
         self.on_send_error = on_send_error
+        self.log_debug = log_debug
 
     async def sink(self, event: CallEvent):
         try:
-            await self.websocket.send_json(event.model_dump())
+            data = event.model_dump()
+            if self.log_debug:
+                self.log_debug(f"Sending event to websocket: {data}")
+            await self.websocket.send_json(data)
         except RuntimeError as exc:
             self.on_send_error(f"error sending to websocket: {exc}")
 
@@ -38,6 +43,8 @@ class WebSocketChannel:
         while True:
             try:
                 data = await self.websocket.receive_json()
+                if self.log_debug:
+                    self.log_debug(f"Received event data from websocket: {data}")
                 yield CallEvents.parse_python(data)
             except WebSocketDisconnect:
                 match self.direction:

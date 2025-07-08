@@ -80,6 +80,10 @@ async def authorized_process_sender_events(
                 event,
                 turn_servers,
             )
+            if call.context.debug:
+                call.context.log.debug(
+                    call, f"Submitting push notification request to pn service: {pn_request.model_dump_json(indent=2)}"
+                )
             await call.push_notifications_sink(pn_request)
             call.transition_to(OutgoingCallState.CALLING, event)
             await call.timeout_scheduler.schedule_timeout()

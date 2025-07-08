@@ -114,14 +114,14 @@ class ServerConfig(BaseSettings):
         ge=0,
     )
 
-    metered_create_credential_url: str = Field(
+    metered_create_api_key_url: str = Field(
         "",
-        description="URL for creating TURN credentials with metered.ca (only used with metered.ca auth)",
+        description="URL for creating TURN credentials - and in practice therefore obtaining an api key - from metered.ca (only used with metered.ca auth)",
     )
 
-    metered_fetch_ice_servers_url: str = Field(
+    metered_get_authed_turn_servers_url: str = Field(
         "",
-        description="URL for fetching ice servers from metered.ca (only used with metered.ca auth)",
+        description="URL for obtaining authed TURN URLs from metered.ca (only used with metered.ca auth)",
     )
 
     metered_api_secret_key: str = Field(

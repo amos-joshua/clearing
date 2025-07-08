@@ -239,9 +239,7 @@ class _PhoneAuthLoginButtonState extends State<PhoneAuthLoginButton> {
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton.icon(
-                    onPressed: _isSendingCode || authState.isLoggingIn
-                        ? null
-                        : _sendVerificationCode,
+                    onPressed: _isSendingCode ? null : _sendVerificationCode,
                     icon: _isSendingCode
                         ? SizedBox(
                             width: 20,
@@ -271,7 +269,7 @@ class _PhoneAuthLoginButtonState extends State<PhoneAuthLoginButton> {
                     controller: _smsController,
                     decoration: const InputDecoration(
                       labelText: 'Verification Code',
-                      hintText: '123456',
+                      hintText: '',
                       prefixIcon: Icon(Icons.sms),
                     ),
                     keyboardType: TextInputType.number,
@@ -294,9 +292,7 @@ class _PhoneAuthLoginButtonState extends State<PhoneAuthLoginButton> {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: _isVerifyingCode || authState.isLoggingIn
-                              ? null
-                              : _verifyCode,
+                          onPressed: _isVerifyingCode ? null : _verifyCode,
                           icon: _isVerifyingCode
                               ? SizedBox(
                                   width: 20,
@@ -350,11 +346,38 @@ class _PhoneAuthLoginButtonState extends State<PhoneAuthLoginButton> {
                       color: Theme.of(context).colorScheme.errorContainer,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Text(
-                      _errorMessage!,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onErrorContainer,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _errorMessage!,
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onErrorContainer,
+                          ),
+                        ),
+                        if (!_codeSent) ...[
+                          const SizedBox(height: 8),
+                          TextButton.icon(
+                            onPressed: _isSendingCode
+                                ? null
+                                : _sendVerificationCode,
+                            icon: _isSendingCode
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.refresh),
+                            label: Text(
+                              _isSendingCode ? 'Retrying...' : 'Retry',
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                 ],

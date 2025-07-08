@@ -4,7 +4,7 @@ from clearing_server.core.event_sinks import EventSinks
 from clearing_server.core.model.users import User, Device
 from clearing_server.core.model.config import ServerConfig
 from tests.calls.mocks.turn_server_generator_mock import TurnStunServerListGeneratorMock
-from tests.calls.mocks.call_log import MockLog
+from tests.calls.mocks.log import MockLog
 from tests.calls.mocks.sinks import MockEventSinks
 from tests.calls.mocks.users import mock_users_repository
 

@@ -265,7 +265,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(6, 4885048815211993063),
     name: 'AppSettings',
-    lastPropertyId: const obx_int.IdUid(10, 2356861124618301028),
+    lastPropertyId: const obx_int.IdUid(11, 1307746726494720038),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -327,6 +327,12 @@ final _entities = <obx_int.ModelEntity>[
       obx_int.ModelProperty(
         id: const obx_int.IdUid(10, 2356861124618301028),
         name: 'disableWebRTC',
+        type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(11, 1307746726494720038),
+        name: 'enableServersideDebug',
         type: 1,
         flags: 0,
       ),
@@ -893,7 +899,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final currentSchemaVersionOffset = fbb.writeString(
           object.currentSchemaVersion,
         );
-        fbb.startTable(11);
+        fbb.startTable(12);
         fbb.addInt64(0, object.id);
         fbb.addBool(1, object.hasNotificationPolicyAccessPermissions);
         fbb.addBool(2, object.hasReceivePushNotificationsPermissions);
@@ -904,6 +910,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(7, object.dbPresetOverrideEnd);
         fbb.addBool(8, object.isDeveloper);
         fbb.addBool(9, object.disableWebRTC);
+        fbb.addBool(10, object.enableServersideDebug);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -935,6 +942,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
           20,
           false,
         );
+        final enableServersideDebugParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          24,
+          false,
+        );
         final disableWebRTCParam = const fb.BoolReader().vTableGet(
           buffer,
           rootOffset,
@@ -951,6 +964,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 performedFirstTimeInit: performedFirstTimeInitParam,
                 currentSchemaVersion: currentSchemaVersionParam,
                 isDeveloper: isDeveloperParam,
+                enableServersideDebug: enableServersideDebugParam,
                 disableWebRTC: disableWebRTCParam,
               )
               ..dbPresetOverrideStart = const fb.Int64Reader().vTableGet(
@@ -1389,6 +1403,11 @@ class AppSettings_ {
   /// See [AppSettings.disableWebRTC].
   static final disableWebRTC = obx.QueryBooleanProperty<AppSettings>(
     _entities[5].properties[9],
+  );
+
+  /// See [AppSettings.enableServersideDebug].
+  static final enableServersideDebug = obx.QueryBooleanProperty<AppSettings>(
+    _entities[5].properties[10],
   );
 }
 

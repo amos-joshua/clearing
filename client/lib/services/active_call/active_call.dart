@@ -54,6 +54,11 @@ class ActiveCallService {
         !context.read<AppSettingsCubit>().state.appSettings.disableWebRTC;
     try {
       final authState = context.read<AuthBloc>().state;
+      final enableServersideDebug = context
+          .read<AppSettingsCubit>()
+          .state
+          .appSettings
+          .enableServersideDebug;
 
       if (authState is! AuthStateSignedIn) {
         throw Exception('Diagnostic call requires a signed in user');
@@ -66,6 +71,7 @@ class ActiveCallService {
         call,
         authState.currentUser.authToken,
         useWebrtc: useWebrtc,
+        enableServersideDebug: enableServersideDebug,
       );
 
       if (context.mounted) {
@@ -111,14 +117,18 @@ class ActiveCallService {
     Call call,
     String clientTokenId, {
     required bool useWebrtc,
+    required bool enableServersideDebug,
   }) async {
     final callGateway = await CallGatewayWebsocket.connect(
-      appConfig.callEndpoint(callUuid: call.callUuid),
+      appConfig.callEndpoint(
+        callUuid: call.callUuid,
+        debug: enableServersideDebug,
+      ),
     );
 
     WebRTCSession? webrtcSession;
     if (useWebrtc) {
-      webrtcSession = WebRTCSession();
+      webrtcSession = WebRTCSession(loggingService: logger);
     }
     final callBloc = OutgoingCallBloc(
       database: database,
@@ -137,6 +147,7 @@ class ActiveCallService {
     required String sdpOffer,
     required List<Map<String, dynamic>> turnServers,
     required bool useWebrtc,
+    required bool enableServersideDebug,
     bool pushInsteadOfRoute = false,
   }) async {
     try {
@@ -154,6 +165,7 @@ class ActiveCallService {
         sdpOffer,
         turnServers: turnServers,
         useWebrtc: useWebrtc,
+        enableServersideDebug: enableServersideDebug,
       );
 
       if (context.mounted) {
@@ -201,9 +213,13 @@ class ActiveCallService {
     String sdpOffer, {
     required bool useWebrtc,
     required List<Map<String, dynamic>> turnServers,
+    required bool enableServersideDebug,
   }) async {
     final callGateway = await CallGatewayWebsocket.connect(
-      appConfig.answerEndpoint(callUuid: call.callUuid),
+      appConfig.answerEndpoint(
+        callUuid: call.callUuid,
+        debug: enableServersideDebug,
+      ),
     );
     WebRTCSession? webrtcSession;
     String sdpAnswer = '';
@@ -214,7 +230,7 @@ class ActiveCallService {
         }
         call.sdpOffer = sdpOffer;
         await database.saveCall(call);
-        webrtcSession = WebRTCSession();
+        webrtcSession = WebRTCSession(loggingService: logger);
         await webrtcSession.createPeerConnection(turnServers);
         sdpAnswer = await webrtcSession.receiverProcessSDPOfferAndCreateAnswer(
           sdpOffer,
