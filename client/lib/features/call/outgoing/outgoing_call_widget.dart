@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc/outgoing_call_bloc.dart';
 import 'bloc/outgoing_call_state.dart';
-import 'widgets/states/idle_call_widget.dart';
 import 'widgets/states/calling_call_widget.dart';
 import 'widgets/states/ringing_call_widget.dart';
 import 'widgets/states/ongoing_call_widget.dart';
@@ -23,7 +22,9 @@ class OutgoingCallWidget extends StatelessWidget {
       width: double.infinity,
       color: call.urgency.backgroundColor,
       child: switch (bloc.state) {
-        OutgoingCallStateIdle() => const IdleCallWidget(),
+        OutgoingCallStateIdle() => const CallingCallWidget(
+          showHangUpButton: false,
+        ),
         OutgoingCallStateAuthorized() => const CallingCallWidget(),
         OutgoingCallStateCalling() => const CallingCallWidget(),
         OutgoingCallStateRinging() => const RingingCallWidget(),

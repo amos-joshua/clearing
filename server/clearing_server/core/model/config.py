@@ -108,6 +108,12 @@ class ServerConfig(BaseSettings):
         description="Daily limit for per-user TURN credential generation",
     )
 
+    turn_credential_generation_timeout_seconds: float = Field(
+        5.0,
+        description="Timeout in seconds for TURN credential generation",
+        ge=0,
+    )
+
     metered_create_credential_url: str = Field(
         "",
         description="URL for creating TURN credentials with metered.ca (only used with metered.ca auth)",
@@ -120,7 +126,7 @@ class ServerConfig(BaseSettings):
 
     metered_api_secret_key: str = Field(
         "",
-        description="Secret key for the clearing metered service (only used with metered.ca auth)",
+        description="Secret key for the clearing metered service (only used with metered.ca auth). If provided as an absolute path (begins with '/'), the value will be treated as a path from which to read the secret",
     )
     
     

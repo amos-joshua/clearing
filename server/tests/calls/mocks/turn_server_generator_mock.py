@@ -14,5 +14,8 @@ class TurnStunServerListGeneratorMock(TurnStunServerListGeneratorBase):
         ]
         super().__init__(config, users)
 
-    def generate_list(self, user_uid: str, call: CallIdentifiable) -> list[dict]:
+    async def generate_list(self, user_uid: str, call: CallIdentifiable) -> list[dict]:
+        return self.turn_servers
+
+    async def _generate_credentials(self, user_uid: str, call: CallIdentifiable) -> list[dict]:
         return self.turn_servers

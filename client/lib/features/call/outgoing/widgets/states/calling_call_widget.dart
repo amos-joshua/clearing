@@ -3,20 +3,21 @@ import '../hang_up_button.dart';
 import '../call_header_widget.dart';
 
 class CallingCallWidget extends StatelessWidget {
-  const CallingCallWidget({super.key});
+  final bool showHangUpButton;
+  const CallingCallWidget({super.key, this.showHangUpButton = true});
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        OutgoingCallHeaderWidget(
+        const OutgoingCallHeaderWidget(
           stateIcon: Icons.call,
           iconColor: Colors.blue,
           stateText: 'Calling...',
         ),
-        SizedBox(height: 40),
-        HangUpButton(isOutgoing: true),
+        const SizedBox(height: 40),
+        if (showHangUpButton) const HangUpButton(isOutgoing: true),
       ],
     );
   }

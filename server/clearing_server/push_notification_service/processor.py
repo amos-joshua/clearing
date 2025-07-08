@@ -1,3 +1,4 @@
+import json
 import traceback
 
 from firebase_admin import messaging
@@ -59,6 +60,7 @@ class PushNotificationProcessor:
         try:
             data = event.model_dump()
             del data["receiver_device_token_ids"]
+            data["turn_servers"] = json.dumps(data["turn_servers"])
 
             message = messaging.MulticastMessage(
                 data=data,

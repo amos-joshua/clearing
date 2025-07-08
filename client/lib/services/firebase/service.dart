@@ -38,6 +38,17 @@ class FirebaseRemoteMessage {
           );
         }
       }
+      final turnServers = data['turn_servers'];
+      if (turnServers is String) {
+        try {
+          final turnServersList = jsonDecode(turnServers);
+          data['turn_servers'] = turnServersList;
+        } on FormatException catch (exc, stackTrace) {
+          logger.warning(
+            'Error parsing turn servers from incoming call init: $exc\n$stackTrace',
+          );
+        }
+      }
       final callEvent = CallEvent.fromJson(data);
       return FirebaseRemoteMessage(
         callEvent: callEvent,

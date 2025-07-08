@@ -1,4 +1,5 @@
 import traceback
+import asyncio
 
 from clearing_server.core.user_repository_base import UserRepositoryBase
 
@@ -11,7 +12,7 @@ class TurnStunServerListGeneratorBase:
         self.config = config
         self.users = users
 
-    def generate_list(self, user_uid: str, call: CallIdentifiable) -> list[dict]:
+    async def generate_list(self, user_uid: str, call: CallIdentifiable) -> list[dict]:
         ice_servers = [
             {
                 "urls": [
@@ -24,8 +25,16 @@ class TurnStunServerListGeneratorBase:
         daily_count = self.users.user_stats_daily_call_count(user_uid)
         if daily_count < self.config.turn_daily_credential_limit:
             try:
-                authorized_turn = self._generate_credentials(user_uid, call)
+                authorized_turn = await asyncio.wait_for(
+                    self._generate_credentials(user_uid, call),
+                    timeout=self.config.turn_credential_generation_timeout_seconds
+                )
                 ice_servers = authorized_turn + ice_servers
+            except asyncio.TimeoutError:
+                self.users.log.error(
+                    call,
+                    f"Timeout generating TURN credentials after {self.config.turn_credential_generation_timeout_seconds} seconds",
+                )
             except Exception as exc:
                 self.users.log.error(
                     call,
@@ -42,7 +51,7 @@ class TurnStunServerListGeneratorBase:
 
         return ice_servers
 
-    def _generate_credentials(self, user_uid: str, call: CallIdentifiable) -> list[dict]:
+    async def _generate_credentials(self, user_uid: str, call: CallIdentifiable) -> list[dict]:
         raise NotImplementedError()
 
 

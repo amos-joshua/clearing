@@ -27,7 +27,7 @@ from clearing_server.core.model.events import (
 
 async def idle_process_sender_events(call: OutgoingCall, event: CallEvent):
     if isinstance(event, SenderAuthorize):
-        turn_servers = call.context.turn_server_generator.generate_list(
+        turn_servers = await call.context.turn_server_generator.generate_list(
             call.context.authenticated_user.uid,
             call
         )
@@ -67,7 +67,7 @@ async def authorized_process_sender_events(
             device_token_ids = [device.token for device in devices]
             call.context.users.update_recipients_for_call(call.uuid, recipients)
 
-            turn_servers = call.context.turn_server_generator.generate_list(
+            turn_servers = await call.context.turn_server_generator.generate_list(
                 recipients[0].uid,
                 call
             )
